@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: james-bond-movies-api
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    sql:
+      init:
+        mode: always
