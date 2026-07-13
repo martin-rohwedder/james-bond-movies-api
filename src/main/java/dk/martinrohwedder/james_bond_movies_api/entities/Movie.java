@@ -1,6 +1,7 @@
 package dk.martinrohwedder.james_bond_movies_api.entities;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,6 +10,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "movies")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+@Builder
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

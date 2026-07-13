@@ -2,9 +2,5 @@ spring:
   application:
     name: james-bond-movies-api
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update
-    sql:
-      init:
-        mode: always
+      ddl-auto: create-drop #create-drop is only viable in a testing environment
