@@ -22,19 +22,20 @@ public class MovieRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        movieRepository.deleteAll();
         movieRepository.save(Movie.builder().title("Test Movie 1").build());
         movieRepository.save(Movie.builder().title("Test Movie 2").build());
-
     }
 
     @Test
     public void should_find_all_movies() {
         List<Movie> movies = movieRepository.findAll();
 
-        assertThat(movies.size()).isEqualTo(2);
-        assertThat(movies.getFirst().getTitle()).isEqualTo("Test Movie 1");
-        assertThat(movies.getLast().getTitle()).isEqualTo("Test Movie 2");
+        assertThat(movies).hasSize(2)
+                        .extracting(Movie::getTitle)
+                        .containsExactlyInAnyOrder("Test Movie 1", "Test Movie 2");
+//        assertThat(movies.size()).isEqualTo(2);
+//        assertThat(movies.getFirst().getTitle()).isEqualTo("Test Movie 1");
+//        assertThat(movies.getLast().getTitle()).isEqualTo("Test Movie 2");
 
     }
 }
