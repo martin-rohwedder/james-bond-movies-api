@@ -15,8 +15,8 @@ public class DataInitializer {
         return args -> {
             if (movieRepository.count() == 0) {
                 movieRepository.saveAll(List.of(
-                        Movie.builder().title("Dr. No").build(),
-                        Movie.builder().title("From Russia With Love").build()
+                        Movie.builder().title("Dr. No").description("A resourceful British government agent seeks answers in a case involving the disappearance of a colleague and the disruption of the American space program.").build(),
+                        Movie.builder().title("From Russia With Love").description("James Bond willingly inserts himself into an assassination plot involving a naive Russian beauty in order to retrieve a Soviet encryption device that was stolen by the evil SPECTRE organization.").build()
                 ));
             }
         };

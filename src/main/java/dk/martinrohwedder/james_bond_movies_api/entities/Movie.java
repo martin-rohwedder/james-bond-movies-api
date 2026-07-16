@@ -23,6 +23,9 @@ public class Movie {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
