@@ -23,8 +23,8 @@ public class Movie {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "short_description")
+    private String shortDescription;
 
     @Column(name = "created_at")
     @CreationTimestamp

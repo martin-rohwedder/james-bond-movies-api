@@ -6,7 +6,7 @@ import java.util.UUID;
 public record MovieResponseDto(
         UUID id,
         String title,
-        String description,
+        String shortDescription,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )
