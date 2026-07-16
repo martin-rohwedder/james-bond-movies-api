@@ -33,9 +33,5 @@ public class MovieRepositoryTest {
         assertThat(movies).hasSize(2)
                         .extracting(Movie::getTitle)
                         .containsExactlyInAnyOrder("Test Movie 1", "Test Movie 2");
-//        assertThat(movies.size()).isEqualTo(2);
-//        assertThat(movies.getFirst().getTitle()).isEqualTo("Test Movie 1");
-//        assertThat(movies.getLast().getTitle()).isEqualTo("Test Movie 2");
-
     }
 }
