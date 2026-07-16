@@ -20,7 +20,7 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "title")
+    @Column(name = "title", columnDefinition = "VARCHAR(100)")
     private String title;
 
     @Column(name = "short_description")
