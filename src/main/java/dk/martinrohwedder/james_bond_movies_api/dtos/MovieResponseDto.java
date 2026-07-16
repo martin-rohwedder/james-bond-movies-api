@@ -7,6 +7,7 @@ public record MovieResponseDto(
         UUID id,
         String title,
         String shortDescription,
+        String longDescription,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )
