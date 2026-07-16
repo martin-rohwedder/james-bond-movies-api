@@ -8,6 +8,7 @@ public record MovieResponseDto(
         String title,
         String shortDescription,
         String longDescription,
+        String trailerUrl,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )

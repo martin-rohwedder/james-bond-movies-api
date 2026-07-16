@@ -29,6 +29,9 @@ public class Movie {
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
 
+    @Column(name = "trailer_url", columnDefinition = "VARCHAR(100)")
+    private String trailerUrl;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
