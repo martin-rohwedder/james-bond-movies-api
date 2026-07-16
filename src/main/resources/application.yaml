@@ -6,3 +6,9 @@ spring:
       ddl-auto: create-drop #create-drop is only viable in a testing environment
   jackson:
     property-naming-strategy: SNAKE_CASE
+
+# DEBUG logging is only viable in a testing environment
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.schema: DEBUG

@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "movies")
+@Table(name = "music")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 @Builder
-public class Movie {
+public class Music {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -23,24 +23,20 @@ public class Movie {
     @Column(name = "title", length = 100)
     private String title;
 
-    @Column(name = "short_description")
-    private String shortDescription;
+    @Column(name = "performer", length = 100)
+    private String performer;
 
-    @Column(name = "long_description", columnDefinition = "TEXT")
-    private String longDescription;
+    @Column(name = "song_url", length = 100)
+    private String songUrl;
 
-    @Column(name = "trailer_url", length = 100)
-    private String trailerUrl;
+    @OneToOne(mappedBy = "music")
+    private Movie movie;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "music_id", referencedColumnName = "id")
-    private Music music;
-
-    @Column(name = "created_at")
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
