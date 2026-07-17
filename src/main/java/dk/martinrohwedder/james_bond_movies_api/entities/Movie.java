@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -38,6 +40,10 @@ public class Movie {
     @Column(name = "world_premiere", length = 50)
     private String worldPremiere;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ReleaseDate> releaseDates = new HashSet<>();
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "music_id", referencedColumnName = "id")
     private Music music;
@@ -53,4 +59,13 @@ public class Movie {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    /****************************************************************************************************
+    /* Convenience method for adding bidirectional relationship between movie and release date entities.
+     ****************************************************************************************************/
+
+    public void addReleaseDate(ReleaseDate releaseDate) {
+        releaseDates.add(releaseDate);
+        releaseDate.setMovie(this);
+    }
 }
