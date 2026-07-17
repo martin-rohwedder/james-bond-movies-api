@@ -15,6 +15,7 @@ public record MovieResponseDto(
         Set<ReleaseDateResponseDto> releaseDates,
         MusicResponseDto music,
         DirectorResponseDto director,
+        Set<ProducerResponseDto> producers,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )

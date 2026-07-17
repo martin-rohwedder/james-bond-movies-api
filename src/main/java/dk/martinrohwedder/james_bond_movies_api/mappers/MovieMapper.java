@@ -9,7 +9,8 @@ import org.mapstruct.Mapper;
         uses = {
                 MusicMapper.class,
                 DirectorMapper.class,
-                ReleaseDateMapper.class
+                ReleaseDateMapper.class,
+                ProducerMapper.class,
         }
 )
 public interface MovieMapper {

@@ -1,9 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.configurations;
 
-import dk.martinrohwedder.james_bond_movies_api.entities.Director;
-import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
-import dk.martinrohwedder.james_bond_movies_api.entities.Music;
-import dk.martinrohwedder.james_bond_movies_api.entities.ReleaseDate;
+import dk.martinrohwedder.james_bond_movies_api.entities.*;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +15,13 @@ import java.util.Set;
 @Configuration
 public class DataInitializer {
     private final HashMap<String, Director> directors = new HashMap<>();
+    private final HashMap<String, Producer> producers = new HashMap<>();
 
     @Bean
     CommandLineRunner initializeMovies(MovieRepository movieRepository) {
         return args -> {
             createDirectors();
+            createProducers();
 
             if (movieRepository.count() == 0) {
                 movieRepository.saveAll(List.of(
@@ -40,7 +39,11 @@ public class DataInitializer {
                                 "James Bond Theme",
                                 "John Barry Orchestra",
                                 "https://www.youtube.com/watch?v=nJhz93idooI",
-                                directors.get("Terence Young")
+                                directors.get("Terence Young"),
+                                new Producer[]{
+                                        producers.get("Harry Saltzman"),
+                                        producers.get("Albert R. Broccoli")
+                                }
                         ),
                         generateMovie(
                                 2,
@@ -56,14 +59,31 @@ public class DataInitializer {
                                 "From Russia With Love",
                                 "Matt Munro",
                                 "https://www.youtube.com/watch?v=tee3Me7mgk0",
-                                directors.get("Terence Young")
+                                directors.get("Terence Young"),
+                                new Producer[]{
+                                        producers.get("Harry Saltzman"),
+                                        producers.get("Albert R. Broccoli")
+                                }
                         )
                 ));
             }
         };
     }
 
-    private Movie generateMovie(int movieNumber, String title, String shortDescription, String longDescription, String trailerUrl, String worldPremiere, ReleaseDate[] releaseDates, String musicTitle, String musicPerformer, String musicSongUrl, Director director) {
+    private Movie generateMovie(
+            int movieNumber,
+            String title,
+            String shortDescription,
+            String longDescription,
+            String trailerUrl,
+            String worldPremiere,
+            ReleaseDate[] releaseDates,
+            String musicTitle,
+            String musicPerformer,
+            String musicSongUrl,
+            Director director,
+            Producer[] producers
+    ) {
         Movie movie = Movie.builder()
                 .movieNumber(movieNumber)
                 .title(title)
@@ -78,6 +98,10 @@ public class DataInitializer {
         // Use convenience method for setting bidirectional relationships between Movie and Release Dates
         Arrays.stream(releaseDates)
                 .forEach(movie::addReleaseDate);
+
+        // Use convenience method for setting bidirectional relationships between Movies and Producers
+        Arrays.stream(producers)
+                .forEach(movie::addProducer);
 
         return movie;
     }
@@ -123,5 +147,32 @@ public class DataInitializer {
                 .country(country)
                 .countryCode(countryCode)
                 .build();
+    }
+
+    private Producer generateProducer(String name, String biography, String nationality, LocalDate dateOfBirth, LocalDate dateOfDeath) {
+        return Producer.builder()
+                .name(name)
+                .biography(biography)
+                .nationality(nationality)
+                .dateOfBirth(dateOfBirth)
+                .dateOfDeath(dateOfDeath)
+                .build();
+    }
+
+    private void createProducers() {
+        producers.put("Harry Saltzman", generateProducer(
+                "Harry Saltzman",
+                "Harry Saltzman was born on October 27, 1915 in Sherbrooke, Québec, Canada. He was a producer and production manager, known for Dr. No (1962), You Only Live Twice (1967) and Live And Let Die (1973). He was married to Tanya Morris, Jacqueline Colin and Adriana Ghinsberg. He died on September 28, 1994 in Neuilly-sur-Seine, Hauts-de-Seine, France.",
+                "Canadian",
+                LocalDate.of(1915, 10, 27),
+                LocalDate.of(1994, 9, 28)
+        ));
+        producers.put("Albert R. Broccoli", generateProducer(
+                "Albert R. Broccoli",
+                "Albert Romolo Broccoli was born in Astoria, Queens (New York City) on April 5th, 1909. His mother and father, Cristina and Giovanni Broccoli, raised young Albert in New York on the family farm. The family was in the vegetable business, and Albert claimed one of his uncles brought the first broccoli seeds into the United States in the 1870's. Albert's cousin Pat DiCicco gave him the nickname 'Cubby' after a comic strip character named Kabibble. Cubby worked in a pharmacy and then as a coffin-maker, but a trip to see his cousin in Los Angeles gave him an ambition for film stardom. Pat was an actor's agent, and introduced Cubby to such stars as Randolph Scott, Cary Grant and Bob Hope.",
+                "American",
+                LocalDate.of(1909, 4, 5),
+                LocalDate.of(1996, 6, 27)
+        ));
     }
 }
