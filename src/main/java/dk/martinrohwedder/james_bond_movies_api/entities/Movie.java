@@ -20,6 +20,9 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "movie_number")
+    private Integer movieNumber;
+
     @Column(name = "title", length = 100)
     private String title;
 

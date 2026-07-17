@@ -16,7 +16,7 @@ public class MovieService {
      * Get a list of all the movies
      */
     public Iterable<MovieResponseDto> getAllMovies() {
-        return movieRepository.findAll()
+        return movieRepository.findAllByOrderByMovieNumberAsc()
                 .stream()
                 .map(movieMapper::movieToMovieResponseDto)
                 .toList();
