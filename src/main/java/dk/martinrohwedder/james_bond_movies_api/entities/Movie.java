@@ -36,6 +36,10 @@ public class Movie {
     @JoinColumn(name = "music_id", referencedColumnName = "id")
     private Music music;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "director_id", referencedColumnName = "id")
+    private Director director;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;

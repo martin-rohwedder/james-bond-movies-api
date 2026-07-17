@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(
         componentModel = "spring",
-        uses = MusicMapper.class
+        uses = {MusicMapper.class, DirectorMapper.class}
 )
 public interface MovieMapper {
     MovieResponseDto movieToMovieResponseDto(Movie movie);

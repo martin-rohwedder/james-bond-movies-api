@@ -1,5 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.configurations;
 
+import dk.martinrohwedder.james_bond_movies_api.entities.Director;
 import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import dk.martinrohwedder.james_bond_movies_api.entities.Music;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
@@ -7,13 +8,19 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 @Configuration
 public class DataInitializer {
+    private final HashMap<String, Director> directors = new HashMap<>();
+
     @Bean
     CommandLineRunner initializeMovies(MovieRepository movieRepository) {
         return args -> {
+            createDirectors();
+
             if (movieRepository.count() == 0) {
                 movieRepository.saveAll(List.of(
                         generateMovie(
@@ -23,7 +30,8 @@ public class DataInitializer {
                                 "https://www.youtube.com/watch?v=H8u0962-baU",
                                 "James Bond Theme",
                                 "John Barry Orchestra",
-                                "https://www.youtube.com/watch?v=nJhz93idooI"
+                                "https://www.youtube.com/watch?v=nJhz93idooI",
+                                directors.get("Terence Young")
                         ),
                         generateMovie(
                                 "From Russia With Love",
@@ -32,20 +40,22 @@ public class DataInitializer {
                                 "https://www.youtube.com/watch?v=XbYsb9sThaY",
                                 "From Russia With Love",
                                 "Matt Munro",
-                                "https://www.youtube.com/watch?v=tee3Me7mgk0"
+                                "https://www.youtube.com/watch?v=tee3Me7mgk0",
+                                directors.get("Terence Young")
                         )
                 ));
             }
         };
     }
 
-    private Movie generateMovie(String title, String shortDescription, String longDescription, String trailerUrl, String musicTitle, String musicPerformer, String musicSongUrl) {
+    private Movie generateMovie(String title, String shortDescription, String longDescription, String trailerUrl, String musicTitle, String musicPerformer, String musicSongUrl, Director director) {
         return Movie.builder()
                 .title(title)
                 .shortDescription(shortDescription)
                 .longDescription(longDescription)
                 .trailerUrl(trailerUrl)
                 .music(generateMusic(musicTitle, musicPerformer, musicSongUrl))
+                .director(director)
                 .build();
     }
 
@@ -55,5 +65,32 @@ public class DataInitializer {
                 .performer(performer)
                 .songUrl(songUrl)
                 .build();
+    }
+
+    private Director generateDirector(String name, String biography, String nationality, LocalDate dateOfBirth, LocalDate dateOfDeath) {
+        return Director.builder()
+                .name(name)
+                .biography(biography)
+                .nationality(nationality)
+                .dateOfBirth(dateOfBirth)
+                .dateOfDeath(dateOfDeath)
+                .build();
+    }
+
+    private void createDirectors() {
+        directors.put("Terence Young", generateDirector(
+                "Terence Young",
+                "Terence Young started his film career as a screenwriter in 1939, moving on to make his directorial debut in 1948 with Corridor of Mirrors starring Eric Portman. Over the course of 40 years (1948-1988) he directed 40 films, most notably three James Bond films -- Dr. No (1962), From Russia with Love (1963), and Thunderball (1965) -- as well as The Amorous Adventures of Moll Flanders (1965) starring Kim Novak, and Wait Until Dark (1967) starring Audrey Hepburn.",
+                "British",
+                LocalDate.of(1915, 6, 20),
+                LocalDate.of(1994, 9, 7)
+        ));
+        directors.put("Guy Hamilton", generateDirector(
+                "Guy Hamilton",
+                "Guy Hamilton (1922–2016) was an acclaimed English film director best known for helming four classic James Bond films: Goldfinger (1964), Diamonds Are Forever (1971), Live and Let Die (1973), and The Man with the Golden Gun (1974). He directed 22 films across a prolific career that spanned from the 1950s to the 1980s",
+                "British",
+                LocalDate.of(1922, 9, 16),
+                LocalDate.of(2016, 4, 20)
+        ));
     }
 }

@@ -10,6 +10,7 @@ public record MovieResponseDto(
         String longDescription,
         String trailerUrl,
         MusicResponseDto music,
+        DirectorResponseDto director,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )
