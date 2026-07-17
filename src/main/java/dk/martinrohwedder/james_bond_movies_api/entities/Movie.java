@@ -32,6 +32,9 @@ public class Movie {
     @Column(name = "trailer_url", length = 100)
     private String trailerUrl;
 
+    @Column(name = "world_premiere", length = 50)
+    private String worldPremiere;
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "music_id", referencedColumnName = "id")
     private Music music;

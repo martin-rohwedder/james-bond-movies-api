@@ -9,6 +9,7 @@ public record MovieResponseDto(
         String shortDescription,
         String longDescription,
         String trailerUrl,
+        String worldPremiere,
         MusicResponseDto music,
         DirectorResponseDto director,
         LocalDateTime createdAt,
