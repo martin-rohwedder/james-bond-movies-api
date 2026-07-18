@@ -61,6 +61,9 @@ public class Movie {
     )
     private Set<Producer> producers = new HashSet<>();
 
+    @Column(name = "locations", length = 1000)
+    private String locations;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -42,7 +42,8 @@ public class DataInitializer {
                                 new Producer[]{
                                         producers.get("Harry Saltzman"),
                                         producers.get("Albert R. Broccoli")
-                                }
+                                },
+                                "Jamaica; Pinewood Studios, Bucks, UK"
                         ),
                         generateMovie(
                                 2,
@@ -62,7 +63,8 @@ public class DataInitializer {
                                 new Producer[]{
                                         producers.get("Harry Saltzman"),
                                         producers.get("Albert R. Broccoli")
-                                }
+                                },
+                                "Istanbul, Turkey; Venice, Italy; Scotland and Pinewood Studios, UK"
                         )
                 ));
             }
@@ -81,7 +83,8 @@ public class DataInitializer {
             String musicPerformer,
             String musicSongUrl,
             Director director,
-            Producer[] producers
+            Producer[] producers,
+            String locations
     ) {
         Movie movie = Movie.builder()
                 .movieNumber(movieNumber)
@@ -92,6 +95,7 @@ public class DataInitializer {
                 .worldPremiere(worldPremiere)
                 .music(generateMusic(musicTitle, musicPerformer, musicSongUrl))
                 .director(director)
+                .locations(locations)
                 .build();
 
         // Use convenience method for setting bidirectional relationships between Movie and Release Dates

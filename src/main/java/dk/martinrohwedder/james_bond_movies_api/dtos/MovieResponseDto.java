@@ -16,6 +16,7 @@ public record MovieResponseDto(
         MusicResponseDto music,
         DirectorResponseDto director,
         Set<ProducerResponseDto> producers,
+        String locations,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )
