@@ -14,6 +14,7 @@ public record MovieResponseDto(
         String worldPremiere,
         Set<ReleaseDateResponseDto> releaseDates,
         MusicResponseDto music,
+        String jamesBondActor,
         DirectorResponseDto director,
         Set<ProducerResponseDto> producers,
         String locations,

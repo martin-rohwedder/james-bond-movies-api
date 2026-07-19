@@ -40,6 +40,7 @@ public class DataInitializer {
                                 "James Bond Theme",
                                 "John Barry Orchestra",
                                 "https://www.youtube.com/watch?v=nJhz93idooI",
+                                actors.get("Sean Connery").getName(),
                                 directors.get("Terence Young"),
                                 new Producer[]{
                                         producers.get("Harry Saltzman"),
@@ -67,6 +68,7 @@ public class DataInitializer {
                                 "From Russia With Love",
                                 "Matt Munro",
                                 "https://www.youtube.com/watch?v=tee3Me7mgk0",
+                                actors.get("Sean Connery").getName(),
                                 directors.get("Terence Young"),
                                 new Producer[]{
                                         producers.get("Harry Saltzman"),
@@ -97,6 +99,7 @@ public class DataInitializer {
             String musicTitle,
             String musicPerformer,
             String musicSongUrl,
+            String jamesBondActor,
             Director director,
             Producer[] producers,
             String locations,
@@ -110,6 +113,7 @@ public class DataInitializer {
                 .trailerUrl(trailerUrl)
                 .worldPremiere(worldPremiere)
                 .music(generateMusic(musicTitle, musicPerformer, musicSongUrl))
+                .jamesBondActor(jamesBondActor)
                 .director(director)
                 .locations(locations)
                 .build();
