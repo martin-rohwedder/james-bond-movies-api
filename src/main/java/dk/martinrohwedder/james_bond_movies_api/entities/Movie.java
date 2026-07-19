@@ -64,6 +64,15 @@ public class Movie {
     @Column(name = "locations", length = 1000)
     private String locations;
 
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "movies_actors",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private Set<Actor> actors = new HashSet<>();
+
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -88,5 +97,14 @@ public class Movie {
     public void addProducer(Producer producer) {
         producers.add(producer);
         producer.getMovies().add(this);
+    }
+
+    /****************************************************************************************************
+     /* Convenience method for adding bidirectional relationship between movie and actor entities.
+     ****************************************************************************************************/
+
+    public void addActor(Actor actor) {
+        actors.add(actor);
+        actor.getMovies().add(this);
     }
 }

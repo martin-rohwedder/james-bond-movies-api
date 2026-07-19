@@ -11,6 +11,7 @@ import org.mapstruct.Mapper;
                 DirectorMapper.class,
                 ReleaseDateMapper.class,
                 ProducerMapper.class,
+                ActorMapper.class
         }
 )
 public interface MovieMapper {
