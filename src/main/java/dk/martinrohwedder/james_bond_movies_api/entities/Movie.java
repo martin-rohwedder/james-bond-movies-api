@@ -52,6 +52,27 @@ public class Movie {
     @JoinColumn(name = "director_id", referencedColumnName = "id")
     private Director director;
 
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "movies_producers",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "producer_id")
+    )
+    private Set<Producer> producers = new HashSet<>();
+
+    @Column(name = "locations", length = 1000)
+    private String locations;
+
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "movies_actors",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private Set<Actor> actors = new HashSet<>();
+
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -67,5 +88,23 @@ public class Movie {
     public void addReleaseDate(ReleaseDate releaseDate) {
         releaseDates.add(releaseDate);
         releaseDate.setMovie(this);
+    }
+
+    /****************************************************************************************************
+     /* Convenience method for adding bidirectional relationship between movie and producer entities.
+     ****************************************************************************************************/
+
+    public void addProducer(Producer producer) {
+        producers.add(producer);
+        producer.getMovies().add(this);
+    }
+
+    /****************************************************************************************************
+     /* Convenience method for adding bidirectional relationship between movie and actor entities.
+     ****************************************************************************************************/
+
+    public void addActor(Actor actor) {
+        actors.add(actor);
+        actor.getMovies().add(this);
     }
 }
