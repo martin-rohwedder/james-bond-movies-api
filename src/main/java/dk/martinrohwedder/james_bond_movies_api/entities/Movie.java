@@ -48,6 +48,9 @@ public class Movie {
     @JoinColumn(name = "music_id", referencedColumnName = "id")
     private Music music;
 
+    @Column(name = "james_bond_actor")
+    private String jamesBondActor;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "director_id", referencedColumnName = "id")
     private Director director;
