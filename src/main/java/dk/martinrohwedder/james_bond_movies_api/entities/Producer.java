@@ -42,9 +42,9 @@ public class Producer {
     @ManyToMany(mappedBy = "producers")
     private Set<Movie> movies = new HashSet<>();
 
-    @Column(name = "create_at")
+    @Column(name = "created_at")
     @CreationTimestamp
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
