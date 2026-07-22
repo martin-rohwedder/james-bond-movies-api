@@ -1,9 +1,14 @@
 spring:
   application:
     name: james-bond-movies-api
+
   jpa:
     hibernate:
-      ddl-auto: create-drop #create-drop is only viable in a testing environment
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+
   jackson:
     property-naming-strategy: SNAKE_CASE
 
