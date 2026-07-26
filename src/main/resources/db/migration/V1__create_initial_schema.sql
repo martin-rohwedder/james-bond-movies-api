@@ -35,7 +35,7 @@ CREATE TABLE movies (
     id BINARY(16) NOT NULL,
     movie_number INT,
     title VARCHAR(100),
-    short_description VARCHAR(255),
+    short_description VARCHAR(1000),
     long_description TEXT,
     trailer_url VARCHAR(100),
     world_premiere VARCHAR(255),
