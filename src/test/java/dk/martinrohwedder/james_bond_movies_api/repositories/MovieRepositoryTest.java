@@ -12,6 +12,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 
 @Import(TestcontainersConfiguration.class)
 @DataJpaTest
@@ -27,5 +28,15 @@ public class MovieRepositoryTest {
         assertThat(movies).hasSize(25);
         assertThat(movies.getFirst()).extracting(Movie::getMovieNumber).isEqualTo(1);
         assertThat(movies.getLast()).extracting(Movie::getMovieNumber).isEqualTo(25);
+    }
+
+    @Test
+    public void should_find_a_specific_movie_by_id() {
+        List<Movie> movies = movieRepository.findAllByOrderByMovieNumberAsc();
+        Optional<Movie> movie = movieRepository.findById(movies.getFirst().getId());
+
+        assertThat(movie.isPresent()).isTrue();
+        assertThat(movie.get()).extracting(Movie::getId).isEqualTo(movies.getFirst().getId());
+        assertThat(movie.get()).extracting(Movie::getMovieNumber).isEqualTo(movies.getFirst().getMovieNumber());
     }
 }

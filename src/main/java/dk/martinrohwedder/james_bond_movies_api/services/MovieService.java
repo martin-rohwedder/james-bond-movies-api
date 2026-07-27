@@ -6,6 +6,8 @@ import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class MovieService {
@@ -20,5 +22,13 @@ public class MovieService {
                 .stream()
                 .map(movieMapper::movieToMovieResponseDto)
                 .toList();
+    }
+
+    /**
+     * Get a specific movie with all its data by id
+     */
+    public MovieResponseDto getMovieById(UUID id) {
+        var movie = movieRepository.findById(id);
+        return movie.map(movieMapper::movieToMovieResponseDto).orElse(null);
     }
 }
