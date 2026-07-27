@@ -20,18 +20,12 @@ public class MovieRepositoryTest {
     @Autowired
     private MovieRepository movieRepository;
 
-    @BeforeEach
-    public void setUp() {
-        movieRepository.save(Movie.builder().title("Test Movie 1").build());
-        movieRepository.save(Movie.builder().title("Test Movie 2").build());
-    }
-
     @Test
     public void should_find_all_movies() {
-        List<Movie> movies = movieRepository.findAll();
+        List<Movie> movies = movieRepository.findAllByOrderByMovieNumberAsc();
 
-        assertThat(movies).hasSize(2)
-                        .extracting(Movie::getTitle)
-                        .containsExactlyInAnyOrder("Test Movie 1", "Test Movie 2");
+        assertThat(movies).hasSize(25);
+        assertThat(movies.getFirst()).extracting(Movie::getMovieNumber).isEqualTo(1);
+        assertThat(movies.getLast()).extracting(Movie::getMovieNumber).isEqualTo(25);
     }
 }
