@@ -17,11 +17,25 @@ public class MovieService {
     /**
      * Get a list of all the movies
      */
-    public Iterable<MovieResponseDto> getAllMovies() {
-        return movieRepository.findAllByOrderByMovieNumberAsc()
+    public Iterable<MovieResponseDto> getAllMovies(boolean excludeActors, boolean excludeProducers) {
+        var movies = movieRepository.findAllByOrderByMovieNumberAsc()
                 .stream()
                 .map(movieMapper::movieToMovieResponseDto)
                 .toList();
+
+        if (excludeActors) {
+            for (var movie : movies) {
+                movie.actors().clear();
+            }
+        }
+
+        if (excludeProducers) {
+            for (var movie : movies) {
+                movie.producers().clear();
+            }
+        }
+
+        return movies;
     }
 
     /**
