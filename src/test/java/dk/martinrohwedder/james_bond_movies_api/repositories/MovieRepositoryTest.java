@@ -2,7 +2,6 @@ package dk.martinrohwedder.james_bond_movies_api.repositories;
 
 import dk.martinrohwedder.james_bond_movies_api.TestcontainersConfiguration;
 import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
