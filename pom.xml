@@ -177,6 +177,39 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<excludes>
+								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
+								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
+								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
+							</excludes>
+
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.70</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

@@ -36,6 +36,17 @@ jobs:
       - name: Verify project
         run: ./mvnw -B verify
 
+      - name: Generate JaCoCo coverage summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: target/site/jacoco/jacoco.xml
+          badge: true
+          format: markdown
+          output: both
+
+      - name: Add coverage to workflow summary
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,3 +62,24 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco
+
+      - name: Extract JaCoCo coverage
+        if: github.ref == 'refs/heads/main'
+        id: jacoco
+        run: |
+          COVERED=$(grep -oP 'counter type="LINE" missed="\d+" covered="\K\d+' target/site/jacoco/jacoco.xml | head -1)
+          MISSED=$(grep -oP 'counter type="LINE" missed="\K\d+' target/site/jacoco/jacoco.xml | head -1)
+          TOTAL=$((COVERED + MISSED))
+          PERCENT=$((100 * COVERED / TOTAL))
+          echo "coverage=$PERCENT" >> $GITHUB_OUTPUT
+
+      - name: Update coverage badge gist
+        if: github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 93e8f6ca889f0389854c6b2d8bb2993d
+          filename: jacoco.json
+          label: coverage
+          message: ${{ steps.jacoco.outputs.coverage }}%
+          color: ${{ steps.jacoco.outputs.coverage >= 90 && 'brightgreen' || steps.jacoco.outputs.coverage >= 80 && 'green' || steps.jacoco.outputs.coverage >= 70 && 'yellow' || 'red' }}
