@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -16,7 +17,7 @@ public class MovieController {
 
     // GET: /api/movies
     @GetMapping
-    public ResponseEntity<Iterable<MovieResponseDto>> getAllMovies(
+    public ResponseEntity<List<MovieResponseDto>> getAllMovies(
             @RequestParam(name = "excludeActors", defaultValue = "false") boolean excludeActors,
             @RequestParam(name = "excludeProducers", defaultValue = "false") boolean excludeProducers
     )
@@ -27,7 +28,8 @@ public class MovieController {
     // GET: /api/movies/{id}
     @GetMapping("/{id}")
     public ResponseEntity<MovieResponseDto> getMovieById(@PathVariable UUID id) {
-        var response = movieService.getMovieById(id);
-        return response == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
+        return movieService.getMovieById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
