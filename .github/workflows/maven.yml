@@ -14,8 +14,14 @@ on:
   pull_request:
     branches: [ main, development ]
 
+permissions:
+  contents: write
+
 jobs:
   test:
+    # Skip runs triggered by the badge update commit
+    if: github.actor != 'github-actions[bot]'
+
     name: Test and verify
     runs-on: ubuntu-latest
 
@@ -36,16 +42,34 @@ jobs:
       - name: Verify project
         run: ./mvnw -B verify
 
-      - name: Generate JaCoCo coverage summary
-        uses: irongut/CodeCoverageSummary@v1.3.0
+      - name: Generate JaCoCo badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2
         with:
-          filename: target/site/jacoco/jacoco.xml
-          badge: true
-          format: markdown
-          output: both
+          badges-directory: .github/badges
+          generate-branches-badge: true
+          generate-summary: true
+          coverage-type: line
+
+      - name: Upload JaCoCo badge
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-badge
+          path: .github/badges/jacoco.svg
 
       - name: Add coverage to workflow summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "## Code coverage" >> $GITHUB_STEP_SUMMARY
+          echo "Line coverage: **${{ steps.jacoco.outputs.coverage }}%**" >> $GITHUB_STEP_SUMMARY
+          echo "Branch coverage: **${{ steps.jacoco.outputs.branches }}%**" >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit coverage badge
+        if: github.ref == 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update JaCoCo coverage badge [skip ci]"
+          file_pattern: .github/badges/jacoco.svg
 
       - name: Upload test reports
         if: always()
@@ -62,24 +86,3 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco
-
-      - name: Extract JaCoCo coverage
-        if: github.ref == 'refs/heads/main'
-        id: jacoco
-        run: |
-          COVERED=$(grep -oP 'counter type="LINE" missed="\d+" covered="\K\d+' target/site/jacoco/jacoco.xml | head -1)
-          MISSED=$(grep -oP 'counter type="LINE" missed="\K\d+' target/site/jacoco/jacoco.xml | head -1)
-          TOTAL=$((COVERED + MISSED))
-          PERCENT=$((100 * COVERED / TOTAL))
-          echo "coverage=$PERCENT" >> $GITHUB_OUTPUT
-
-      - name: Update coverage badge gist
-        if: github.ref == 'refs/heads/main'
-        uses: schneegans/dynamic-badges-action@v1.7.0
-        with:
-          auth: ${{ secrets.GIST_SECRET }}
-          gistID: 93e8f6ca889f0389854c6b2d8bb2993d
-          filename: jacoco.json
-          label: coverage
-          message: ${{ steps.jacoco.outputs.coverage }}%
-          color: ${{ steps.jacoco.outputs.coverage >= 90 && 'brightgreen' || steps.jacoco.outputs.coverage >= 80 && 'green' || steps.jacoco.outputs.coverage >= 70 && 'yellow' || 'red' }}
