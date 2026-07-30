@@ -4,9 +4,10 @@ import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.services.MovieService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -16,7 +17,19 @@ public class MovieController {
 
     // GET: /api/movies
     @GetMapping
-    public ResponseEntity<Iterable<MovieResponseDto>> getAllMovies() {
-        return ResponseEntity.ok(movieService.getAllMovies());
+    public ResponseEntity<List<MovieResponseDto>> getAllMovies(
+            @RequestParam(name = "excludeActors", defaultValue = "false") boolean excludeActors,
+            @RequestParam(name = "excludeProducers", defaultValue = "false") boolean excludeProducers
+    )
+    {
+        return ResponseEntity.ok(movieService.getAllMovies(excludeActors, excludeProducers));
+    }
+
+    // GET: /api/movies/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<MovieResponseDto> getMovieById(@PathVariable UUID id) {
+        return movieService.getMovieById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

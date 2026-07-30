@@ -6,6 +6,10 @@ import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class MovieService {
@@ -15,10 +19,22 @@ public class MovieService {
     /**
      * Get a list of all the movies
      */
-    public Iterable<MovieResponseDto> getAllMovies() {
+    public List<MovieResponseDto> getAllMovies(boolean excludeActors, boolean excludeProducers) {
         return movieRepository.findAllByOrderByMovieNumberAsc()
                 .stream()
-                .map(movieMapper::movieToMovieResponseDto)
+                .map(movie -> movieMapper.movieToMovieResponseDto(
+                        movie,
+                        excludeActors,
+                        excludeProducers
+                ))
                 .toList();
+    }
+
+    /**
+     * Get a specific movie with all its data by id
+     */
+    public Optional<MovieResponseDto> getMovieById(UUID id) {
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieResponseDto);
     }
 }

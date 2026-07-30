@@ -1,4 +1,5 @@
 [![Java CI with Maven](https://github.com/martin-rohwedder/james-bond-movies-api/actions/workflows/maven.yml/badge.svg)](https://github.com/martin-rohwedder/james-bond-movies-api/actions/workflows/maven.yml)
+![Coverage](.github/badges/jacoco.svg)
 
 # James Bond Movies API
 
