@@ -1,5 +1,8 @@
 [![Java CI with Maven](https://github.com/martin-rohwedder/james-bond-movies-api/actions/workflows/maven.yml/badge.svg)](https://github.com/martin-rohwedder/james-bond-movies-api/actions/workflows/maven.yml)
 ![Coverage](.github/badges/jacoco.svg)
+![Java](https://img.shields.io/badge/Java-25-blue?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?logo=springboot&logoColor=lightgreen)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=lightblue)
 
 # James Bond Movies API
 
