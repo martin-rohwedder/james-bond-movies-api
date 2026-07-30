@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MovieControllerIntegrationTest extends AbstractIntegrationTest {
+class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     private static final String BASE_URL = "/api/movies";
 
     @Autowired
