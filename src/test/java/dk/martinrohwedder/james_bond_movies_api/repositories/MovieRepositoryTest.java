@@ -16,7 +16,7 @@ import java.util.Optional;
 @Import(TestcontainersConfiguration.class)
 @DataJpaTest
 @Testcontainers
-public class MovieRepositoryTest {
+class MovieRepositoryTest {
     @Autowired
     private MovieRepository movieRepository;
 
