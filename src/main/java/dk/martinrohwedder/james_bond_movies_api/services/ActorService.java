@@ -1,6 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.services;
 
-import dk.martinrohwedder.james_bond_movies_api.dtos.ActorResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.ActorWithMovieResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.mappers.ActorMapper;
 import dk.martinrohwedder.james_bond_movies_api.repositories.ActorRepository;
 import lombok.AllArgsConstructor;
@@ -19,28 +19,18 @@ public class ActorService {
     /**
      * Get a specific actor by id
      */
-    public Optional<ActorResponseDto> getActorById(UUID id) {
+    public Optional<ActorWithMovieResponseDto> getActorById(UUID id) {
         return actorRepository.findById(id)
-                .map(actorMapper::actorToActorResponseDto);
+                .map(actorMapper::actorToActorWithMovieResponseDto);
     }
 
-    /**
-     * Get a specific actor by name
-     */
-    public List<ActorResponseDto> getActorByName(String name) {
-        return actorRepository.findAllByNameIgnoreCase(name)
-                .stream()
-                .map(actorMapper::actorToActorResponseDto)
-                .toList();
-    }
+    public List<ActorWithMovieResponseDto> getAllActors(String name, boolean includeMovies) {
+        var actors = (name == null || name.isBlank())
+                ? actorRepository.findAllByOrderByNameAsc()
+                : actorRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
 
-    /**
-     * Get All Actors
-     */
-    public List<ActorResponseDto> getAllActors() {
-        return actorRepository.findAll()
-                .stream()
-                .map(actorMapper::actorToActorResponseDto)
+        return actors.stream()
+                .map(actor -> actorMapper.actorToActorWithMovieResponseDto(actor, includeMovies))
                 .toList();
     }
 }

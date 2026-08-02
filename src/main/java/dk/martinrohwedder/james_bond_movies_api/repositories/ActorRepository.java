@@ -7,5 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ActorRepository extends JpaRepository<Actor, UUID> {
-    List<Actor> findAllByNameIgnoreCase(String name);
+    List<Actor> findAllByOrderByNameAsc();
+    List<Actor> findAllByNameIgnoreCaseOrderByNameAsc(String name);
 }
