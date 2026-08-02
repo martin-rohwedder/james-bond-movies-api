@@ -17,68 +17,120 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(TestcontainersConfiguration.class)
 @DataJpaTest
 @Testcontainers
-public class ActorRepositoryTest {
+class ActorRepositoryTest {
+
     @Autowired
     private ActorRepository actorRepository;
 
     @Test
-    void should_find_a_specific_actor_by_id() {
-        List<Actor> actors = actorRepository.findAll();
-        Optional<Actor> actor = actorRepository.findById(actors.getFirst().getId());
+    void should_find_actor_by_id() {
+        Actor expected = actorRepository.findAllByOrderByNameAsc().getFirst();
 
-        assertThat(actor)
+        Optional<Actor> result = actorRepository.findById(expected.getId());
+
+        assertThat(result)
                 .isPresent()
                 .get()
-                .extracting(Actor::getName)
-                .isEqualTo(actors.getFirst().getName());
+                .satisfies(actor -> {
+                    assertThat(actor.getId()).isEqualTo(expected.getId());
+                    assertThat(actor.getName()).isEqualTo(expected.getName());
+                });
     }
 
     @Test
     void should_return_empty_optional_when_actor_id_is_not_found() {
-        Optional<Actor> actor = actorRepository.findById(UUID.randomUUID());
+        Optional<Actor> result = actorRepository.findById(UUID.randomUUID());
 
-        assertThat(actor).isEmpty();
+        assertThat(result).isEmpty();
     }
 
     @Test
-    void should_find_a_specific_actor_by_name() {
-        List<Actor> actors = actorRepository.findAllByNameIgnoreCase("Joe Don Baker");
+    void should_find_actors_by_name() {
+        List<Actor> result =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Joe Don Baker");
 
-        assertThat(actors)
+        assertThat(result)
                 .hasSize(2)
-                .allMatch(actor -> actor.getName().equals("Joe Don Baker"));
+                .extracting(Actor::getName)
+                .containsOnly("Joe Don Baker");
     }
 
     @Test
-    void should_find_a_specific_actor_by_name_ignoring_case() {
-        List<Actor> actors = actorRepository.findAllByNameIgnoreCase("sean coNNerY");
+    void should_find_actor_by_name_ignoring_case() {
+        List<Actor> result =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("sean coNNerY");
 
-        assertThat(actors).size().isEqualTo(1);
-        assertThat(actors.getFirst()).extracting(Actor::getName).isEqualTo("Sean Connery");
+        assertThat(result)
+                .singleElement()
+                .extracting(Actor::getName)
+                .isEqualTo("Sean Connery");
     }
 
     @Test
-    void should_find_all_actors() {
-        List<Actor> actors = actorRepository.findAll();
+    void should_find_actor_by_name_with_special_characters() {
+        List<Actor> result =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Gert Fröbe");
 
-        assertThat(actors.size()).isGreaterThan(0);
+        assertThat(result)
+                .singleElement()
+                .extracting(Actor::getName)
+                .isEqualTo("Gert Fröbe");
+    }
+
+    @Test
+    void should_find_actor_by_name_case_insensitive_with_special_character() {
+        List<Actor> result =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("gert fröbe");
+
+        assertThat(result)
+                .singleElement()
+                .extracting(Actor::getName)
+                .isEqualTo("Gert Fröbe");
     }
 
     @Test
     void should_return_empty_list_when_actor_name_is_not_found() {
-        List<Actor> actors = actorRepository.findAllByNameIgnoreCase("Wrong Actor Name");
+        List<Actor> result =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Wrong Actor Name");
 
-        assertThat(actors).isEmpty();
+        assertThat(result).isEmpty();
     }
 
     @Test
-    void should_find_actor_by_name_with_special_character() {
-        List<Actor> actors = actorRepository.findAllByNameIgnoreCase("Gert Fröbe");
+    void should_return_all_actors_ordered_by_name() {
+        List<String> names = actorRepository.findAllByOrderByNameAsc()
+                .stream()
+                .map(Actor::getName)
+                .toList();
 
-        assertThat(actors)
-                .hasSize(1)
-                .first()
-                .extracting(Actor::getName)
-                .isEqualTo("Gert Fröbe");
+        assertThat(names)
+                .isNotEmpty()
+                .startsWith(
+                        "Adolfo Celi",
+                        "Akiko Wakabayashi"
+                );
+    }
+
+    @Test
+    void should_return_same_results_for_different_name_casing() {
+        List<Actor> lowerCase =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("sean connery");
+
+        List<Actor> mixedCase =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("SeAn CoNnErY");
+
+        assertThat(lowerCase)
+                .extracting(Actor::getId)
+                .containsExactlyElementsOf(
+                        mixedCase.stream().map(Actor::getId).toList()
+                );
+    }
+
+    @Test
+    void should_return_empty_list_when_actor_name_is_blank() {
+        List<Actor> result =
+                actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("   ");
+
+        assertThat(result).isEmpty();
     }
 }
