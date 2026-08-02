@@ -25,7 +25,7 @@ public class ActorController {
 
     // GET: /api/actors
     // GET: /api/actors?name={actor_name}
-    // GET: /api/actors?name={actor_name}&includeMovies=true
+    // GET: /api/actors?name={actor_name}&includeMovies={true/false}
     @GetMapping
     public ResponseEntity<List<ActorWithMovieResponseDto>> getAllActors(
             @RequestParam(required = false) String name,
