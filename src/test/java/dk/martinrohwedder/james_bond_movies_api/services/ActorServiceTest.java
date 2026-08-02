@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -77,6 +79,112 @@ public class ActorServiceTest {
         assertThat(result).isEmpty();
 
         verify(actorRepository).findById(id);
+        verifyNoInteractions(actorMapper);
+    }
+
+    @Test
+    void should_return_all_actors() {
+        // Arrange
+        Actor actor1 = createActorEntity();
+        Actor actor2 = createActorEntity();
+        ActorResponseDto dto1 = mock(ActorResponseDto.class);
+        ActorResponseDto dto2 = mock(ActorResponseDto.class);
+
+        when(actorRepository.findAll())
+                .thenReturn(List.of(actor1, actor2));
+
+        when(actorMapper.actorToActorResponseDto(actor1)).thenReturn(dto1);
+        when(actorMapper.actorToActorResponseDto(actor2)).thenReturn(dto2);
+
+        // Act
+        List<ActorResponseDto> result = actorService.getAllActors();
+
+        // Assert
+        assertThat(result).containsExactly(dto1, dto2);
+
+        verify(actorRepository).findAll();
+        verify(actorMapper).actorToActorResponseDto(actor1);
+        verify(actorMapper).actorToActorResponseDto(actor2);
+        verifyNoMoreInteractions(actorRepository, actorMapper);
+    }
+
+    @Test
+    void should_return_multiple_actors_with_same_name() {
+        Actor actor1 = createActorEntity();
+        Actor actor2 = createActorEntity();
+
+        ActorResponseDto dto1 = mock(ActorResponseDto.class);
+        ActorResponseDto dto2 = mock(ActorResponseDto.class);
+
+        when(actorRepository.findAllByNameIgnoreCase("Sean Connery"))
+                .thenReturn(List.of(actor1, actor2));
+
+        when(actorMapper.actorToActorResponseDto(actor1)).thenReturn(dto1);
+        when(actorMapper.actorToActorResponseDto(actor2)).thenReturn(dto2);
+
+        List<ActorResponseDto> result =
+                actorService.getActorByName("Sean Connery");
+
+        assertThat(result).containsExactly(dto1, dto2);
+
+        verify(actorRepository).findAllByNameIgnoreCase("Sean Connery");
+        verify(actorMapper).actorToActorResponseDto(actor1);
+        verify(actorMapper).actorToActorResponseDto(actor2);
+        verifyNoMoreInteractions(actorRepository, actorMapper);
+    }
+
+    @Test
+    void should_return_actors_by_name() {
+        // Arrange
+        Actor actor = createActorEntity();
+        String actorName = "Sean Connery";
+        ActorResponseDto dto = mock(ActorResponseDto.class);
+
+        when(actorRepository.findAllByNameIgnoreCase(actorName))
+                .thenReturn(List.of(actor));
+
+        when(actorMapper.actorToActorResponseDto(actor))
+                .thenReturn(dto);
+
+        // Act
+        List<ActorResponseDto> result = actorService.getActorByName(actorName);
+
+        // Assert
+        assertThat(result).containsExactly(dto);
+
+        verify(actorRepository).findAllByNameIgnoreCase(actorName);
+        verify(actorMapper).actorToActorResponseDto(actor);
+        verifyNoMoreInteractions(actorRepository, actorMapper);
+    }
+
+    @Test
+    void should_return_empty_list_when_providing_wrong_actor_name() {
+        // Arrange
+        String actorName = "Wrong actor name";
+
+        when(actorRepository.findAllByNameIgnoreCase(actorName))
+                .thenReturn(Collections.emptyList());
+
+        // Act
+        List<ActorResponseDto> result = actorService.getActorByName(actorName);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(actorRepository).findAllByNameIgnoreCase(actorName);
+        verifyNoInteractions(actorMapper);
+    }
+
+    @Test
+    void should_return_empty_list_when_no_actors_exist() {
+        when(actorRepository.findAll())
+                .thenReturn(Collections.emptyList());
+
+        List<ActorResponseDto> result = actorService.getAllActors();
+
+        assertThat(result).isEmpty();
+
+        verify(actorRepository).findAll();
         verifyNoInteractions(actorMapper);
     }
 }

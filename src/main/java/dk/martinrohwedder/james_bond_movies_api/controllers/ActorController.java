@@ -4,11 +4,9 @@ import dk.martinrohwedder.james_bond_movies_api.dtos.ActorResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.services.ActorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,5 +21,18 @@ public class ActorController {
         return actorService.getActorById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET: /api/actors
+    // GET: /api/actors?name={actor_name}
+    @GetMapping
+    public ResponseEntity<List<ActorResponseDto>> getAllActors(
+            @RequestParam(name = "name", required = false) String name
+    ) {
+        if (name == null) {
+            return ResponseEntity.ok(actorService.getAllActors());
+        }
+
+        return ResponseEntity.ok(actorService.getActorByName(name));
     }
 }
