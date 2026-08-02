@@ -1,7 +1,7 @@
 package dk.martinrohwedder.james_bond_movies_api.dtos;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public record MovieResponseDto(
@@ -12,13 +12,13 @@ public record MovieResponseDto(
         String longDescription,
         String trailerUrl,
         String worldPremiere,
-        Set<ReleaseDateResponseDto> releaseDates,
+        List<ReleaseDateResponseDto> releaseDates,
         MusicResponseDto music,
         String jamesBondActor,
         DirectorResponseDto director,
-        Set<ProducerResponseDto> producers,
+        List<ProducerResponseDto> producers,
         String locations,
-        Set<ActorResponseDto> actors,
+        List<ActorResponseDto> actors,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )

@@ -7,9 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "producers")
@@ -40,7 +38,7 @@ public class Producer {
 
     @Builder.Default
     @ManyToMany(mappedBy = "producers")
-    private Set<Movie> movies = new HashSet<>();
+    private List<Movie> movies = new ArrayList<>();
 
     @Column(name = "created_at")
     @CreationTimestamp

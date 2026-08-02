@@ -4,7 +4,7 @@ import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import org.mapstruct.Mapper;
 
-import java.util.Set;
+import java.util.List;
 
 @Mapper(
         componentModel = "spring",
@@ -38,9 +38,9 @@ public interface MovieMapper {
                 dto.music(),
                 dto.jamesBondActor(),
                 dto.director(),
-                excludeProducers ? Set.of() : dto.producers(),
+                excludeProducers ? List.of() : dto.producers(),
                 dto.locations(),
-                excludeActors ? Set.of() : dto.actors(),
+                excludeActors ? List.of() : dto.actors(),
                 dto.createdAt(),
                 dto.updatedAt()
         );
