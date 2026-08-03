@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface DirectorRepository extends JpaRepository<Director, UUID> {
     List<Director> findAllByOrderByNameAsc();
-//    List<Director> findAllByNameIgnoreCaseOrderByNameAsc(String name);
+    List<Director> findAllByNameIgnoreCaseOrderByNameAsc(String name);
 }

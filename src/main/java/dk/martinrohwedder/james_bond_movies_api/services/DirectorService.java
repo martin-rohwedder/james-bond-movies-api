@@ -17,9 +17,12 @@ public class DirectorService {
     /**
      * Get all directors
      */
-    public List<DirectorWithMoviesResponseDto> getAllDirectors() {
-        return directorRepository.findAllByOrderByNameAsc()
-                .stream()
+    public List<DirectorWithMoviesResponseDto> getAllDirectors(String name) {
+        var directors = (name == null || name.isBlank())
+                ? directorRepository.findAllByOrderByNameAsc()
+                : directorRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
+
+        return directors.stream()
                 .map(directorMapper::directorToDirectorWithMoviesResponseDto)
                 .toList();
     }

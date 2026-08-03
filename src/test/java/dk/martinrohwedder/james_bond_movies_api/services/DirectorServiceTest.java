@@ -71,7 +71,7 @@ class DirectorServiceTest {
                 .thenReturn(dto2);
 
         // Act
-        List<DirectorWithMoviesResponseDto> result = directorService.getAllDirectors();
+        List<DirectorWithMoviesResponseDto> result = directorService.getAllDirectors(null);
 
         // Assert
         assertThat(result).containsExactly(dto1, dto2);
@@ -83,45 +83,92 @@ class DirectorServiceTest {
     }
 
     @Test
+    void should_return_directors_by_name() {
+        Director director = createDirectorEntity("Guy Hamilton");
+        DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
+
+        when(directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Guy Hamilton"))
+                .thenReturn(List.of(director));
+
+        when(directorMapper.directorToDirectorWithMoviesResponseDto(director))
+                .thenReturn(dto);
+
+        List<DirectorWithMoviesResponseDto> result = directorService.getAllDirectors("Guy Hamilton");
+
+        assertThat(result).containsExactly(dto);
+
+        verify(directorRepository).findAllByNameIgnoreCaseOrderByNameAsc("Guy Hamilton");
+        verify(directorMapper).directorToDirectorWithMoviesResponseDto(director);
+        verifyNoMoreInteractions(directorRepository, directorMapper);
+    }
+
+    @Test
+    void should_return_all_directors_when_name_is_blank() {
+        Director director = createDirectorEntity("Guy Hamilton");
+        DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
+
+        when(directorRepository.findAllByOrderByNameAsc())
+                .thenReturn(List.of(director));
+
+        when(directorMapper.directorToDirectorWithMoviesResponseDto(director))
+                .thenReturn(dto);
+
+        List<DirectorWithMoviesResponseDto> result =
+                directorService.getAllDirectors("   ");
+
+        assertThat(result).containsExactly(dto);
+
+        verify(directorRepository).findAllByOrderByNameAsc();
+        verify(directorMapper).directorToDirectorWithMoviesResponseDto(director);
+    }
+
+    @Test
+    void should_return_all_directors_when_name_is_empty() {
+        Director director = createDirectorEntity("Guy Hamilton");
+        DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
+
+        when(directorRepository.findAllByOrderByNameAsc())
+                .thenReturn(List.of(director));
+
+        when(directorMapper.directorToDirectorWithMoviesResponseDto(director))
+                .thenReturn(dto);
+
+        List<DirectorWithMoviesResponseDto> result =
+                directorService.getAllDirectors("");
+
+        assertThat(result).containsExactly(dto);
+
+        verify(directorRepository).findAllByOrderByNameAsc();
+        verifyNoMoreInteractions(directorRepository, directorMapper);
+    }
+
+    @Test
+    void should_return_empty_list_when_no_matching_director_exists() {
+        when(directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Unknown Director"))
+                .thenReturn(Collections.emptyList());
+
+        List<DirectorWithMoviesResponseDto> result =
+                directorService.getAllDirectors("Unknown Director");
+
+        assertThat(result).isEmpty();
+
+        verify(directorRepository).findAllByNameIgnoreCaseOrderByNameAsc("Unknown Director");
+        verifyNoInteractions(directorMapper);
+    }
+
+    @Test
     void should_return_empty_list_when_no_directors_exist() {
         // Arrange
         when(directorRepository.findAllByOrderByNameAsc())
                 .thenReturn(Collections.emptyList());
 
         // Act
-        List<DirectorWithMoviesResponseDto> result = directorService.getAllDirectors();
+        List<DirectorWithMoviesResponseDto> result = directorService.getAllDirectors(null);
 
         // Assert
         assertThat(result).isEmpty();
 
         verify(directorRepository).findAllByOrderByNameAsc();
         verifyNoInteractions(directorMapper);
-    }
-
-    @Test
-    void should_map_all_directors_in_order() {
-        // Arrange
-        Director director1 = createDirectorEntity("Guy Hamilton");
-        Director director2 = createDirectorEntity("Lewis Gilbert");
-
-        DirectorWithMoviesResponseDto dto1 = createDirectorDto("Guy Hamilton");
-        DirectorWithMoviesResponseDto dto2 = createDirectorDto("Lewis Gilbert");
-
-        when(directorRepository.findAllByOrderByNameAsc())
-                .thenReturn(List.of(director1, director2));
-
-        when(directorMapper.directorToDirectorWithMoviesResponseDto(director1))
-                .thenReturn(dto1);
-        when(directorMapper.directorToDirectorWithMoviesResponseDto(director2))
-                .thenReturn(dto2);
-
-        // Act
-        List<DirectorWithMoviesResponseDto> result = directorService.getAllDirectors();
-
-        // Assert
-        assertThat(result).containsExactly(dto1, dto2);
-
-        verify(directorMapper, times(2))
-                .directorToDirectorWithMoviesResponseDto(any(Director.class));
     }
 }

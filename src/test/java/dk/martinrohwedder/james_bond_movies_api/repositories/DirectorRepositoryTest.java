@@ -30,10 +30,8 @@ class DirectorRepositoryTest {
         assertThat(result)
                 .isPresent()
                 .get()
-                .satisfies(director -> {
-                    assertThat(director.getId()).isEqualTo(expected.getId());
-                    assertThat(director.getName()).isEqualTo(expected.getName());
-                });
+                .extracting(Director::getId, Director::getName)
+                .containsExactly(expected.getId(), expected.getName());
     }
 
     @Test
@@ -41,13 +39,6 @@ class DirectorRepositoryTest {
         var result = directorRepository.findById(UUID.randomUUID());
 
         assertThat(result).isEmpty();
-    }
-
-    @Test
-    void should_return_all_directors() {
-        List<Director> result = directorRepository.findAllByOrderByNameAsc();
-
-        assertThat(result).isNotEmpty();
     }
 
     @Test
@@ -63,5 +54,51 @@ class DirectorRepositoryTest {
                         "Cary Joji Fukunaga",
                         "Guy Hamilton"
                 );
+    }
+
+    @Test
+    void should_return_director_by_name() {
+        List<Director> result = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Guy Hamilton");
+
+        assertThat(result)
+                .singleElement()
+                .extracting(Director::getName)
+                .isEqualTo("Guy Hamilton");
+    }
+
+    @Test
+    void should_find_director_by_name_ignoring_case() {
+        List<Director> result = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("gUy hAMilTon");
+
+        assertThat(result)
+                .singleElement()
+                .extracting(Director::getName)
+                .isEqualTo("Guy Hamilton");
+    }
+
+    @Test
+    void should_return_same_results_for_different_name_casing() {
+        List<Director> lower = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("guy hamilton");
+        List<Director> mixed = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("GuY HaMilTon");
+
+        assertThat(lower)
+                .extracting(Director::getId)
+                .containsExactlyElementsOf(
+                        mixed.stream().map(Director::getId).toList()
+                );
+    }
+
+    @Test
+    void should_return_empty_list_when_director_name_is_not_found() {
+        List<Director> result = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Unknown Director");
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void should_return_empty_list_when_director_name_is_blank() {
+        List<Director> result = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc("   ");
+
+        assertThat(result).isEmpty();
     }
 }

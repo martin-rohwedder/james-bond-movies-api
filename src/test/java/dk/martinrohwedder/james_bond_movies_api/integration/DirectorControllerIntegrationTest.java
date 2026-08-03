@@ -32,6 +32,10 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
         return mockMvc.perform(get(BASE_URL));
     }
 
+    private ResultActions getDirectorsByName(String name) throws Exception {
+        return mockMvc.perform(get(BASE_URL).param("name", name));
+    }
+
     // -------------------------------------------------------------------------
     // GET /api/directors
     // -------------------------------------------------------------------------
@@ -49,7 +53,7 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_return_complete_director_structure() throws Exception {
+    void should_return_complete_director_structure_with_movies() throws Exception {
         Director director = directorRepository.findAllByOrderByNameAsc().getFirst();
 
         ResultActions result = getDirectors()
@@ -70,6 +74,39 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void should_return_directors_by_name() throws Exception {
+        String name = "Guy Hamilton";
+        List<Director> expected = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
+
+        getDirectorsByName(name)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(expected.size()))
+                .andExpect(jsonPath("$[0].id").value(expected.getFirst().getId().toString()))
+                .andExpect(jsonPath("$[0].name").value(name));
+    }
+
+    @Test
+    void should_find_director_by_name_case_insensitive() throws Exception {
+        getDirectorsByName("gUy hAMilTon")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Guy Hamilton"));
+    }
+
+    @Test
+    void should_return_empty_list_when_director_name_is_not_found() throws Exception {
+        getDirectorsByName("Unknown Director")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void should_return_all_directors_when_name_is_blank() throws Exception {
+        getDirectorsByName("")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(directorRepository.count()));
+    }
+
+    @Test
     void should_include_movies_for_each_director() throws Exception {
         getDirectors()
                 .andExpect(status().isOk())
@@ -85,5 +122,14 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value(directors.get(0).getName()))
                 .andExpect(jsonPath("$[1].name").value(directors.get(1).getName()));
+    }
+
+    @Test
+    void should_return_movies_ordered_by_movie_number() throws Exception {
+        getDirectorsByName("Terence Young")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].movies[0].movie_number").value(1))
+                .andExpect(jsonPath("$[0].movies[1].movie_number").value(2))
+                .andExpect(jsonPath("$[0].movies[2].movie_number").value(4));
     }
 }
