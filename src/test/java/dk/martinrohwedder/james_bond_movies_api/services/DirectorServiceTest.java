@@ -7,12 +7,16 @@ import dk.martinrohwedder.james_bond_movies_api.repositories.DirectorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,6 +57,49 @@ class DirectorServiceTest {
         directorService = new DirectorService(directorRepository, directorMapper);
     }
 
+    // -------------------------------------------------------------------------
+    // getDirectorById
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_director_by_id() {
+        UUID id = UUID.randomUUID();
+        Director director = createDirectorEntity("Guy Hamilton");
+        DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
+
+        when(directorRepository.findById(id)).thenReturn(Optional.of(director));
+        when(directorMapper.directorToDirectorWithMoviesResponseDto(director))
+                .thenReturn(dto);
+
+        Optional<DirectorWithMoviesResponseDto> result =
+                directorService.getDirectorById(id);
+
+        assertThat(result).contains(dto);
+
+        verify(directorRepository).findById(id);
+        verify(directorMapper).directorToDirectorWithMoviesResponseDto(director);
+        verifyNoMoreInteractions(directorRepository, directorMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_director_is_not_found() {
+        UUID id = UUID.randomUUID();
+
+        when(directorRepository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<DirectorWithMoviesResponseDto> result =
+                directorService.getDirectorById(id);
+
+        assertThat(result).isEmpty();
+
+        verify(directorRepository).findById(id);
+        verifyNoInteractions(directorMapper);
+    }
+
+    // -------------------------------------------------------------------------
+    // getAllDirectors
+    // -------------------------------------------------------------------------
+
     @Test
     void should_return_all_directors() {
         // Arrange
@@ -83,7 +130,7 @@ class DirectorServiceTest {
     }
 
     @Test
-    void should_return_directors_by_name() {
+    void should_return_directors_filtered_by_name() {
         Director director = createDirectorEntity("Guy Hamilton");
         DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
 
@@ -102,8 +149,10 @@ class DirectorServiceTest {
         verifyNoMoreInteractions(directorRepository, directorMapper);
     }
 
-    @Test
-    void should_return_all_directors_when_name_is_blank() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   ", "\t", "\n"})
+    void should_return_all_directors_when_name_is_blank_or_null(String name) {
         Director director = createDirectorEntity("Guy Hamilton");
         DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
 
@@ -114,31 +163,12 @@ class DirectorServiceTest {
                 .thenReturn(dto);
 
         List<DirectorWithMoviesResponseDto> result =
-                directorService.getAllDirectors("   ");
+                directorService.getAllDirectors(name);
 
         assertThat(result).containsExactly(dto);
 
         verify(directorRepository).findAllByOrderByNameAsc();
         verify(directorMapper).directorToDirectorWithMoviesResponseDto(director);
-    }
-
-    @Test
-    void should_return_all_directors_when_name_is_empty() {
-        Director director = createDirectorEntity("Guy Hamilton");
-        DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
-
-        when(directorRepository.findAllByOrderByNameAsc())
-                .thenReturn(List.of(director));
-
-        when(directorMapper.directorToDirectorWithMoviesResponseDto(director))
-                .thenReturn(dto);
-
-        List<DirectorWithMoviesResponseDto> result =
-                directorService.getAllDirectors("");
-
-        assertThat(result).containsExactly(dto);
-
-        verify(directorRepository).findAllByOrderByNameAsc();
         verifyNoMoreInteractions(directorRepository, directorMapper);
     }
 

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -25,5 +27,13 @@ public class DirectorService {
         return directors.stream()
                 .map(directorMapper::directorToDirectorWithMoviesResponseDto)
                 .toList();
+    }
+
+    /**
+     * Get a specific director by id
+     */
+    public Optional<DirectorWithMoviesResponseDto> getDirectorById(UUID id) {
+        return directorRepository.findById(id)
+                .map(directorMapper::directorToDirectorWithMoviesResponseDto);
     }
 }

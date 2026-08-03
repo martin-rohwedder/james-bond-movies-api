@@ -4,12 +4,10 @@ import dk.martinrohwedder.james_bond_movies_api.dtos.DirectorWithMoviesResponseD
 import dk.martinrohwedder.james_bond_movies_api.services.DirectorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/directors")
@@ -24,5 +22,13 @@ public class DirectorController {
             @RequestParam(required = false) String name
     ) {
         return ResponseEntity.ok(directorService.getAllDirectors(name));
+    }
+
+    // GET: /api/directors/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<DirectorWithMoviesResponseDto> getDirectorById(@PathVariable UUID id) {
+        return directorService.getDirectorById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

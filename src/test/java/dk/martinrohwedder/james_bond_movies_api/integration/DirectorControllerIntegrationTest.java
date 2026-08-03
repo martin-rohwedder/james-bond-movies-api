@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,12 +29,67 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
     // Helper method
     // -------------------------------------------------------------------------
 
+    private ResultActions getDirector(UUID id) throws Exception {
+        return mockMvc.perform(get(BASE_URL + "/{id}", id));
+    }
+
+    private ResultActions getDirector(String id) throws Exception {
+        return mockMvc.perform(get(BASE_URL + "/{id}", id));
+    }
+
     private ResultActions getDirectors() throws Exception {
         return mockMvc.perform(get(BASE_URL));
     }
 
     private ResultActions getDirectorsByName(String name) throws Exception {
         return mockMvc.perform(get(BASE_URL).param("name", name));
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/directors/{id}
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_director_by_id() throws Exception {
+        Director director = directorRepository.findAllByOrderByNameAsc().getFirst();
+
+        getDirector(director.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(director.getId().toString()))
+                .andExpect(jsonPath("$.name").value(director.getName()));
+    }
+
+    @Test
+    void should_return_complete_director_structure_by_id() throws Exception {
+        Director director = directorRepository.findAllByOrderByNameAsc().getFirst();
+
+        ResultActions result = getDirector(director.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(director.getId().toString()))
+                .andExpect(jsonPath("$.name").value(director.getName()))
+                .andExpect(jsonPath("$.biography").value(director.getBiography()))
+                .andExpect(jsonPath("$.nationality").value(director.getNationality()))
+                .andExpect(jsonPath("$.date_of_birth").value(director.getDateOfBirth().toString()))
+                .andExpect(jsonPath("$.movies").isArray());
+
+        if (director.getDateOfDeath() != null) {
+            result.andExpect(jsonPath("$.date_of_death")
+                    .value(director.getDateOfDeath().toString()));
+        } else {
+            result.andExpect(jsonPath("$.date_of_death").value(nullValue()));
+        }
+    }
+
+    @Test
+    void should_return_status_not_found_when_director_id_is_unknown() throws Exception {
+        getDirector(UUID.randomUUID())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_for_invalid_uuid() throws Exception {
+        getDirector("not-a-uuid")
+                .andExpect(status().isBadRequest());
     }
 
     // -------------------------------------------------------------------------
@@ -53,28 +109,29 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_return_complete_director_structure_with_movies() throws Exception {
-        Director director = directorRepository.findAllByOrderByNameAsc().getFirst();
-
-        ResultActions result = getDirectors()
+    void should_include_movies_for_each_director() throws Exception {
+        getDirectors()
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(director.getId().toString()))
-                .andExpect(jsonPath("$[0].name").value(director.getName()))
-                .andExpect(jsonPath("$[0].biography").value(director.getBiography()))
-                .andExpect(jsonPath("$[0].nationality").value(director.getNationality()))
-                .andExpect(jsonPath("$[0].date_of_birth").value(director.getDateOfBirth().toString()))
-                .andExpect(jsonPath("$[0].movies").isArray());
-
-        if (director.getDateOfDeath() != null) {
-            result.andExpect(jsonPath("$[0].date_of_death")
-                    .value(director.getDateOfDeath().toString()));
-        } else {
-            result.andExpect(jsonPath("$[0].date_of_death").value(nullValue()));
-        }
+                .andExpect(jsonPath("$[0].movies").isArray())
+                .andExpect(jsonPath("$[0].movies.length()").isNotEmpty());
     }
 
     @Test
-    void should_return_directors_by_name() throws Exception {
+    void should_return_directors_ordered_by_name() throws Exception {
+        List<Director> directors = directorRepository.findAllByOrderByNameAsc();
+
+        getDirectors()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value(directors.get(0).getName()))
+                .andExpect(jsonPath("$[1].name").value(directors.get(1).getName()));
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/directors?name=...
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_directors_filtered_by_name() throws Exception {
         String name = "Guy Hamilton";
         List<Director> expected = directorRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
 
@@ -104,24 +161,6 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
         getDirectorsByName("")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(directorRepository.count()));
-    }
-
-    @Test
-    void should_include_movies_for_each_director() throws Exception {
-        getDirectors()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].movies").isArray())
-                .andExpect(jsonPath("$[0].movies.length()").isNotEmpty());
-    }
-
-    @Test
-    void should_return_directors_ordered_by_name() throws Exception {
-        List<Director> directors = directorRepository.findAllByOrderByNameAsc();
-
-        getDirectors()
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value(directors.get(0).getName()))
-                .andExpect(jsonPath("$[1].name").value(directors.get(1).getName()));
     }
 
     @Test
