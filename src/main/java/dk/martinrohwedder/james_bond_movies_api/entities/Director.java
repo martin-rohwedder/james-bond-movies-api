@@ -7,7 +7,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,7 +39,8 @@ public class Director {
     private LocalDate dateOfDeath;
 
     @OneToMany(mappedBy = "director")
-    private Set<Movie> movies;
+    @OrderBy("movieNumber ASC")
+    private List<Movie> movies = new ArrayList<>();
 
     @Column(name = "created_at")
     @CreationTimestamp

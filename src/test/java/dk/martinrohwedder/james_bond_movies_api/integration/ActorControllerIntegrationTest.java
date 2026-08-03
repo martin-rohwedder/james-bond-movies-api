@@ -88,6 +88,14 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void should_return_movies_ordered_by_movie_number() throws Exception {
+        getActor("168088f0-e705-446b-96f4-cf1fdb035856")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.movies[0].movie_number").value(1))
+                .andExpect(jsonPath("$.movies[1].movie_number").value(2));
+    }
+
+    @Test
     void should_return_status_not_found_when_actor_id_given_is_wrong()  throws Exception {
         getActor("41e7c4a8-ad00-4137-9c83-55edd8c58fe7")
                 .andExpect(status().isNotFound());

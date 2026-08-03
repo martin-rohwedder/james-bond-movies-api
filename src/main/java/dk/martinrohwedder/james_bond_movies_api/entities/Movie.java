@@ -6,9 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "movies")
@@ -42,7 +40,7 @@ public class Movie {
 
     @Builder.Default
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ReleaseDate> releaseDates = new HashSet<>();
+    private List<ReleaseDate> releaseDates = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "music_id", referencedColumnName = "id")
@@ -62,7 +60,7 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "producer_id")
     )
-    private Set<Producer> producers = new HashSet<>();
+    private List<Producer> producers = new ArrayList<>();
 
     @Column(name = "locations", length = 1000)
     private String locations;
@@ -74,7 +72,7 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
-    private Set<Actor> actors = new HashSet<>();
+    private List<Actor> actors = new ArrayList<>();
 
     @Column(name = "created_at")
     @CreationTimestamp
