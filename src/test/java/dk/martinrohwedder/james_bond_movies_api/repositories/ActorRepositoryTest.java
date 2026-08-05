@@ -1,12 +1,8 @@
 package dk.martinrohwedder.james_bond_movies_api.repositories;
 
-import dk.martinrohwedder.james_bond_movies_api.TestcontainersConfiguration;
 import dk.martinrohwedder.james_bond_movies_api.entities.Actor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +10,10 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(TestcontainersConfiguration.class)
-@DataJpaTest
-@Testcontainers
-class ActorRepositoryTest {
+//@Import(TestcontainersConfiguration.class)
+//@DataJpaTest
+//@Testcontainers
+class ActorRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     private ActorRepository actorRepository;

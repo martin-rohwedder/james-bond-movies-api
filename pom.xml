@@ -180,6 +180,7 @@
 						<configuration>
 							<excludes>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
+								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
 							</excludes>
 						</configuration>
@@ -194,6 +195,7 @@
 						<configuration>
 							<excludes>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
+								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
 							</excludes>
 

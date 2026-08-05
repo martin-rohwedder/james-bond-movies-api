@@ -38,6 +38,7 @@ public class Director {
     @Column(name = "date_of_death")
     private LocalDate dateOfDeath;
 
+    @Builder.Default
     @OneToMany(mappedBy = "director")
     @OrderBy("movieNumber ASC")
     private List<Movie> movies = new ArrayList<>();

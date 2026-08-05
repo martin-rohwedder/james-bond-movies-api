@@ -15,6 +15,12 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
 
+# DEBUG logging is only viable in a testing environment
 logging:
   level:
-    dk.martinrohwedder.james_bond_movies_api: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.schema: DEBUG
+    org.flywaydb: DEBUG
+    db.migration: DEBUG
+    com.zaxxer.hikari: DEBUG
+    com.mysql.cj: DEBUG

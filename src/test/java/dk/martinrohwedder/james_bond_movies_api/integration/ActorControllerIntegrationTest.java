@@ -4,51 +4,21 @@ import dk.martinrohwedder.james_bond_movies_api.entities.Actor;
 import dk.martinrohwedder.james_bond_movies_api.repositories.ActorRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
-import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.nullValue;
 
 public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
-    private static final String BASE_URL = "/api/actors";
-
     @Autowired
     private ActorRepository actorRepository;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    // -------------------------------------------------------------------------
-    // Helper methods
-    // -------------------------------------------------------------------------
-
-    private ResultActions getActor(UUID id) throws Exception {
-        return mockMvc.perform(get(BASE_URL + "/{id}", id));
-    }
-
-    private ResultActions getActor(String id) throws Exception {
-        return mockMvc.perform(get(BASE_URL + "/{id}", id));
-    }
-
-    private ResultActions getActors() throws Exception {
-        return mockMvc.perform(get(BASE_URL));
-    }
-
-    private ResultActions getActorsByName(String name, boolean includeMovies) throws Exception {
-        var request = get(BASE_URL)
-                .param("includeMovies", String.valueOf(includeMovies));
-
-        if (name != null) {
-            request.param("name", name);
-        }
-
-        return mockMvc.perform(request);
+    @Override
+    protected String baseUrl() {
+        return "/api/actors";
     }
 
     // -------------------------------------------------------------------------
@@ -59,7 +29,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
     void should_return_actor_by_id() throws Exception {
         Actor actor = actorRepository.findAllByOrderByNameAsc().getFirst();
 
-        getActor(actor.getId())
+        getById(actor.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(actor.getId().toString()))
                 .andExpect(jsonPath("$.name").value(actor.getName()));
@@ -69,7 +39,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
     void should_return_complete_actor_structure_by_id() throws Exception {
         Actor actor = actorRepository.findAllByOrderByNameAsc().getFirst();
 
-        ResultActions result = getActor(actor.getId())
+        ResultActions result = getById(actor.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(actor.getId().toString()))
                 .andExpect(jsonPath("$.name").value(actor.getName()))
@@ -89,7 +59,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_movies_ordered_by_movie_number() throws Exception {
-        getActor("168088f0-e705-446b-96f4-cf1fdb035856")
+        getById("168088f0-e705-446b-96f4-cf1fdb035856")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.movies[0].movie_number").value(1))
                 .andExpect(jsonPath("$.movies[1].movie_number").value(2));
@@ -97,13 +67,13 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_status_not_found_when_actor_id_given_is_wrong()  throws Exception {
-        getActor("41e7c4a8-ad00-4137-9c83-55edd8c58fe7")
+        getById("41e7c4a8-ad00-4137-9c83-55edd8c58fe7")
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void should_return_bad_request_for_invalid_uuid() throws Exception {
-        getActor("not-a-uuid")
+        getById("not-a-uuid")
                 .andExpect(status().isBadRequest());
     }
 
@@ -116,7 +86,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
         List<Actor> actors = actorRepository.findAllByOrderByNameAsc();
         Actor actor = actors.getFirst();
 
-        getActors()
+        getAll()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(actor.getId().toString()))
                 .andExpect(jsonPath("$[0].name").value(actor.getName()))
@@ -126,7 +96,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_include_movies_by_default() throws Exception {
-        getActors()
+        getAll()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].movies").isArray())
                 .andExpect(jsonPath("$[0].movies.length()").isNotEmpty());
@@ -134,7 +104,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_same_result_when_include_movies_is_true() throws Exception {
-        getActorsByName(null, true)
+        getWithParams("includeMovies", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].movies").isArray())
                 .andExpect(jsonPath("$[0].movies.length()").isNotEmpty());
@@ -142,7 +112,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_exclude_movies_when_include_movies_is_false() throws Exception {
-        getActorsByName(null, false)
+        getWithParams("includeMovies", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].movies").isArray())
                 .andExpect(jsonPath("$[0].movies.length()").value(0));
@@ -150,8 +120,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_bad_request_for_invalid_include_movies_parameter() throws Exception {
-        mockMvc.perform(get(BASE_URL)
-                        .param("includeMovies", "invalid"))
+        getWithParams("includeMovies", "invalid")
                 .andExpect(status().isBadRequest());
     }
 
@@ -164,7 +133,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
         String actorName = "Joe Don Baker";
         List<Actor> expected = actorRepository.findAllByNameIgnoreCaseOrderByNameAsc(actorName);
 
-        getActorsByName(actorName, true)
+        getWithParams("name", actorName, "includeMovies", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(expected.getFirst().getId().toString()))
                 .andExpect(jsonPath("$[0].name").value(expected.getFirst().getName()))
@@ -173,7 +142,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_actors_by_name_without_movies() throws Exception {
-        getActorsByName("Joe Don Baker", false)
+        getWithParams("name", "Joe Don Baker", "includeMovies", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Joe Don Baker"))
                 .andExpect(jsonPath("$[0].movies.length()").value(0));
@@ -184,7 +153,7 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
         String actorName = "Gert Fröbe";
         List<Actor> expected = actorRepository.findAllByNameIgnoreCaseOrderByNameAsc(actorName);
 
-        getActorsByName(actorName, true)
+        getWithParams("name", actorName, "includeMovies", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(expected.getFirst().getId().toString()))
                 .andExpect(jsonPath("$[0].name").value(expected.getFirst().getName()))
@@ -193,28 +162,28 @@ public class ActorControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_actors_by_name_case_insensitive_with_special_character() throws Exception {
-        getActorsByName("gert fröbe", true)
+        getWithParams("name", "gert fröbe", "includeMovies", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Gert Fröbe"));
     }
 
     @Test
     void should_find_actor_by_name_case_insensitive() throws Exception {
-        getActorsByName("sean coNNerY", true)
+        getWithParams("name", "sean coNNerY", "includeMovies", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Sean Connery"));
     }
 
     @Test
     void should_return_empty_list_when_actor_name_given_is_wrong()  throws Exception {
-        getActorsByName("Wrong Actor Name", true)
+        getWithParams("name", "Wrong Actor Name", "includeMovies", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
 
     @Test
     void should_return_all_actors_when_name_is_blank() throws Exception {
-        getActorsByName("", true)
+        getWithParams("name", "", "includeMovies", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(actorRepository.count()));
     }

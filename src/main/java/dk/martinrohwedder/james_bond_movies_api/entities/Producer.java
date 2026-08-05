@@ -38,6 +38,7 @@ public class Producer {
 
     @Builder.Default
     @ManyToMany(mappedBy = "producers")
+    @OrderBy("movieNumber ASC")
     private List<Movie> movies = new ArrayList<>();
 
     @Column(name = "created_at")
