@@ -4,51 +4,26 @@ import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.UUID;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class MovieControllerIntegrationTest extends AbstractIntegrationTest {
-    private static final String BASE_URL = "/api/movies";
-
     @Autowired
     private MovieRepository movieRepository;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    // Helper methods for reducing redundancy
-
-    private ResultActions getMovies() throws Exception {
-        return mockMvc.perform(get(BASE_URL));
-    }
-
-    private ResultActions getMovies(boolean excludeActors, boolean excludeProducers) throws Exception {
-        return mockMvc.perform(get(BASE_URL)
-                .param("excludeActors", String.valueOf(excludeActors))
-                .param("excludeProducers", String.valueOf(excludeProducers)));
-    }
-
-    private ResultActions getMovie(UUID id) throws Exception {
-        return mockMvc.perform(get(BASE_URL + "/{id}", id));
-    }
-
-    private ResultActions getMovie(String id) throws Exception {
-        return mockMvc.perform(get(BASE_URL + "/{id}", id));
-    }
 
     private int expectedMovieCount() {
         return (int) movieRepository.count();
     }
 
+    @Override
+    protected String baseUrl() {
+        return "/api/movies";
+    }
+
     @Test
     void should_return_all_movies_ordered_by_movie_number() throws Exception {
-        getMovies()
+        getAll()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].movie_number").value(1))
                 .andExpect(jsonPath("$[0].title").value("Dr. No"))
@@ -59,7 +34,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_actors_and_producers_by_default() throws Exception {
-        getMovies()
+        getAll()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].actors").isArray())
                 .andExpect(jsonPath("$[0].producers").isArray());
@@ -67,7 +42,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_same_result_as_default_when_query_parameters_are_false() throws Exception {
-        getMovies(false, false)
+        getWithParams("excludeActors", "false", "excludeProducers", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].actors").isArray())
                 .andExpect(jsonPath("$[0].producers").isArray());
@@ -75,7 +50,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_exclude_actors_from_movies_when_query_parameter_is_true() throws Exception {
-        getMovies(true, false)
+        getWithParams("excludeActors", "true", "excludeProducers", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].actors").isEmpty())
                 .andExpect(jsonPath("$[0].producers").isArray());
@@ -83,7 +58,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_exclude_producers_from_movies_when_query_parameter_is_true() throws Exception {
-        getMovies(false, true)
+        getWithParams("excludeActors", "false", "excludeProducers", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].producers").isEmpty())
                 .andExpect(jsonPath("$[0].actors").isArray());
@@ -91,7 +66,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_exclude_producers_and_actors_from_movies_when_query_parameters_is_true() throws Exception {
-        getMovies(true, true)
+        getWithParams("excludeActors", "true", "excludeProducers", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].producers").isEmpty())
                 .andExpect(jsonPath("$[0].actors").isEmpty());
@@ -99,28 +74,28 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_not_change_number_of_movies_when_excluding_actors() throws Exception {
-        getMovies(true, false)
+        getWithParams("excludeActors", "true", "excludeProducers", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedMovieCount()));
     }
 
     @Test
     void should_not_change_number_of_movies_when_excluding_producers() throws Exception {
-        getMovies(false, true)
+        getWithParams("excludeActors", "false", "excludeProducers", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedMovieCount()));
     }
 
     @Test
     void should_not_change_number_of_movies_when_excluding_actors_and_producers() throws Exception {
-        getMovies(true, true)
+        getWithParams("excludeActors", "true", "excludeProducers", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedMovieCount()));
     }
 
     @Test
     void should_keep_director_and_music_when_excluding_actors_and_producers() throws Exception {
-        getMovies(true, true)
+        getWithParams("excludeActors", "true", "excludeProducers", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].director.name").exists())
                 .andExpect(jsonPath("$[0].music.title").exists())
@@ -130,7 +105,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_bad_request_for_invalid_boolean_parameter() throws Exception {
-        mockMvc.perform(get(BASE_URL).param("excludeActors", "invalid"))
+        getWithParams("excludeActors", "invalid")
                 .andExpect(status().isBadRequest());
     }
 
@@ -138,7 +113,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     void should_return_movie_by_id() throws Exception {
         Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
 
-        getMovie(movie.getId())
+        getById(movie.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
                 .andExpect(jsonPath("$.id").value(movie.getId().toString()));
@@ -148,7 +123,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     void should_return_complete_movie_structure_by_id() throws Exception {
         Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
 
-        getMovie(movie.getId())
+        getById(movie.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(movie.getId().toString()))
                 .andExpect(jsonPath("$.movie_number").value(movie.getMovieNumber()))
@@ -182,13 +157,13 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_status_not_found_when_movie_id_given_is_wrong() throws Exception {
-        getMovie("41e7c4a8-ad00-4137-9c83-55edd8c58fe7")
+        getById("41e7c4a8-ad00-4137-9c83-55edd8c58fe7")
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void should_return_bad_request_for_invalid_uuid() throws Exception {
-        getMovie("not-a-uuid")
+        getById("not-a-uuid")
                 .andExpect(status().isBadRequest());
     }
 }
