@@ -1,5 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.filters;
 
+import dk.martinrohwedder.james_bond_movies_api.utilities.SecurityPaths;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,12 +10,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Component
 public class ApiKeyFilter extends OncePerRequestFilter {
+    private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
     @Value("${app.security.api-key}")
     private String configuredApiKey;
@@ -47,8 +50,12 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
 
-        return path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")
-                || path.startsWith("/favicon.ico");
+        for (String pattern : SecurityPaths.PUBLIC_PATHS) {
+            if (PATH_MATCHER.match(pattern, path)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

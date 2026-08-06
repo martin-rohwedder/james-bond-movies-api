@@ -1,6 +1,7 @@
 package dk.martinrohwedder.james_bond_movies_api.configurations;
 
 import dk.martinrohwedder.james_bond_movies_api.filters.ApiKeyFilter;
+import dk.martinrohwedder.james_bond_movies_api.utilities.SecurityPaths;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +26,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/favicon.ico"
+                                SecurityPaths.PUBLIC_PATHS
                         ).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class);
