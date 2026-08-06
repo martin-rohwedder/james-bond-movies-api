@@ -182,11 +182,10 @@
 						</goals>
 						<configuration>
 							<excludes>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/configurations/**</exclude>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/filters/ApiKeyFilter.class</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
+								<exclude>**/*MapperImpl.class</exclude>
+								<exclude>**/*Application.class</exclude>
 							</excludes>
 						</configuration>
 					</execution>
@@ -199,11 +198,10 @@
 						</goals>
 						<configuration>
 							<excludes>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/configurations/**</exclude>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/filters/ApiKeyFilter.class</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
+								<exclude>**/*MapperImpl.class</exclude>
+								<exclude>**/*Application.class</exclude>
 							</excludes>
 
 							<rules>
