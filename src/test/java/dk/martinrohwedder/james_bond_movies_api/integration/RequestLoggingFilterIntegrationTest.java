@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class RequestLoggingFilterIntegrationTest extends AbstractIntegrationTest {
@@ -32,8 +31,8 @@ class RequestLoggingFilterIntegrationTest extends AbstractIntegrationTest {
             "/v3/api-docs",
             "/favicon.ico"
     })
-    void should_skip_excluded_paths(String path) throws Exception {
-        mockMvc.perform(get(path))
-                .andExpect(status().isNotFound());
+    void should_not_require_api_key_for_excluded_paths(String path) throws Exception {
+        getPathWithoutApiKey(path)
+                .andExpect(status().isNotFound()); // or isOk() if Swagger is enabled
     }
 }

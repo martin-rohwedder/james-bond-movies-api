@@ -38,7 +38,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-docker-compose</artifactId>
@@ -181,7 +184,8 @@
 							<excludes>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
+								<exclude>**/*MapperImpl.class</exclude>
+								<exclude>**/*Application.class</exclude>
 							</excludes>
 						</configuration>
 					</execution>
@@ -196,7 +200,8 @@
 							<excludes>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
-								<exclude>dk/martinrohwedder/james_bond_movies_api/JamesBondMoviesApiApplication.class</exclude>
+								<exclude>**/*MapperImpl.class</exclude>
+								<exclude>**/*Application.class</exclude>
 							</excludes>
 
 							<rules>

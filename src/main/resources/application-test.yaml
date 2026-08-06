@@ -2,6 +2,9 @@ spring:
   application:
     name: james-bond-movies-api
 
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: jdbc:mysql://localhost:3306/${MYSQL_DATABASE}?useUnicode=true&characterEncoding=utf8mb4
 
@@ -14,6 +17,10 @@ spring:
 
   jackson:
     property-naming-strategy: SNAKE_CASE
+
+app:
+  security:
+    api-key: ${API_KEY}
 
 # DEBUG logging is only viable in a testing environment
 logging:
