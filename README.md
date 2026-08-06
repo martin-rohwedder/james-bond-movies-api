@@ -18,6 +18,8 @@ MYSQL_DATABASE=mydatabase
 MYSQL_PASSWORD=secret
 MYSQL_ROOT_PASSWORD=verysecret
 MYSQL_USER=myuser
+
+API_KEY=your-very-long-random-api-key
 ```
 
 3. Make sure you have [Docker Desktop](https://docs.docker.com/desktop/) installed and running on your machine.
