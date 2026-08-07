@@ -24,7 +24,7 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    @Value("${app.security.api-key}")
+    @Value("${app.security.api-key:test-api-key}")
     private String apiKey;
 
     protected abstract String baseUrl();
