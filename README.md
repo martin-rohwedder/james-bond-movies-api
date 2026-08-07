@@ -24,3 +24,22 @@ API_KEY=your-very-long-random-api-key
 
 3. Make sure you have [Docker Desktop](https://docs.docker.com/desktop/) installed and running on your machine.
 4. Run the project and it will automatically open up in a new docker container with an attached MySQL database.
+
+# API Documentation
+
+When the API is running locally, interactive API documentation is available through Swagger UI.
+
+- Swagger UI: http://localhost:8080/swagger-ui/index.html
+- OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+Swagger UI allows you to explore the available endpoints and execute requests directly from the browser.
+
+## Authentication
+
+Since API is protected with an API key (set in your `.env` file), you should include the API key in the request header `X-API-Key`.
+
+In the Swagger UI, click **Authorize** and enter your API key to authenticate requests.
+
+---
+
+&copy; 2026 Martin Rohwedder

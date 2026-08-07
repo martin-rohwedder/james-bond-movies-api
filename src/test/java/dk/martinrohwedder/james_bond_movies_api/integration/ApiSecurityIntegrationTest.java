@@ -28,9 +28,9 @@ class ApiSecurityIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-//    @Test
-//    void should_not_require_api_key_for_swagger() throws Exception {
-//        mockMvc.perform(get("/swagger-ui/index.html"))
-//                .andExpect(status().isOk()); // Uncomment this test, when Swagger is enabled
-//    }
+    @Test
+    void should_not_require_api_key_for_swagger() throws Exception {
+        getPathWithoutApiKey("/swagger-ui/index.html")
+                .andExpect(status().isOk());
+    }
 }

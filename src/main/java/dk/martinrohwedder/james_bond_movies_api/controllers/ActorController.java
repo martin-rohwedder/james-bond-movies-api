@@ -2,6 +2,8 @@ package dk.martinrohwedder.james_bond_movies_api.controllers;
 
 import dk.martinrohwedder.james_bond_movies_api.dtos.ActorWithMovieResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.services.ActorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +14,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/actors")
 @AllArgsConstructor
+@Tag(name = "Actors", description = "Operations related to James Bond movie actors")
 public class ActorController {
     private final ActorService actorService;
 
     // GET: /api/actors/{id}
+    @Operation(summary = "Get an actor by id")
     @GetMapping("/{id}")
     public ResponseEntity<ActorWithMovieResponseDto> getActorById(@PathVariable UUID id) {
         return actorService.getActorById(id)
@@ -26,6 +30,7 @@ public class ActorController {
     // GET: /api/actors
     // GET: /api/actors?name={actor_name}
     // GET: /api/actors?name={actor_name}&includeMovies={true/false}
+    @Operation(summary = "Get all actors. Filter by name and exclude movies")
     @GetMapping
     public ResponseEntity<List<ActorWithMovieResponseDto>> getAllActors(
             @RequestParam(required = false) String name,
