@@ -20,7 +20,7 @@ spring:
 
 app:
   security:
-    api-key: ${API_KEY}
+    api-key: test-api-key
 
 # DEBUG logging is only viable in a testing environment
 logging:

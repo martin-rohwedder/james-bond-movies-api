@@ -4,8 +4,7 @@ public final class SecurityPaths {
 
     public static final String[] PUBLIC_PATHS = {
             "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/favicon.ico"
+            "/v3/api-docs/**"
     };
 
     private SecurityPaths() {}

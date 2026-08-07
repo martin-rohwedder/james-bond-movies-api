@@ -24,7 +24,7 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    @Value("${app.security.api-key}")
+    @Value("${app.security.api-key:test-api-key}")
     private String apiKey;
 
     protected abstract String baseUrl();
@@ -64,7 +64,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     // -------------------------------------------------------------------------
-    // Request Loggin Filter helpers
+    // Request Logging Filter and Open API Config helper
     // -------------------------------------------------------------------------
 
     protected ResultActions getPathWithoutApiKey(String path) throws Exception {
