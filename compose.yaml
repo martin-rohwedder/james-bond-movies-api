@@ -22,7 +22,7 @@ services:
 
   jb_api:
     profiles: [ "deploy" ]
-    build: .
+    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.0.0
     restart: unless-stopped
     depends_on:
       mysql:
