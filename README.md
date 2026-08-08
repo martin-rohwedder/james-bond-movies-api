@@ -8,13 +8,25 @@
 
 REST API built with Spring Boot for James Bond movies, directors, producers, actors, and music.
 
-## How to get started
+# How to get started
 
-1. Clone the project with `git clone https://github.com/martin-rohwedder/james-bond-movies-api.git` and open it up in your favorite coding IDE (e.g. [IntelliJ](https://www.jetbrains.com/idea/)).
-2. Create an `.env` (environment file) at the project root.
+## Prerequisites
+
+- Java 25
+- Docker Desktop
+- IntelliJ IDEA (Recommended)
+
+## Run locally
+
+1. Clone the repository.
+
+- `git clone https://github.com/martin-rohwedder/james-bond-movies-api.git`
+- `cd james-bond-movies-api`
+
+2. Create a `.env` file in the project root.
 
 ```dotenv
-MYSQL_DATABASE=mydatabase
+MYSQL_DATABASE=jb_api_db
 MYSQL_USER=myuser
 MYSQL_PASSWORD=secret
 MYSQL_ROOT_PASSWORD=verysecret
@@ -22,26 +34,33 @@ MYSQL_ROOT_PASSWORD=verysecret
 API_KEY=your-very-long-random-api-key
 ```
 
-3. Replace the `MYSQL` values with your preferred database credentials.
-4. Replace the `API_KEY` with a secure random value.
-5. Make sure you have [Docker Desktop](https://docs.docker.com/desktop/) installed and running on your machine.
-6. Build the application JAR file with `.mvnw clean package` (or on Windows `mvnw.cmd clean package`)
+3. Replace the MySQL credentials and API key with your preferred values.
+4. Open the project in IntelliJ IDEA.
+5. Start the Spring Boot application from IntelliJ.
 
-### Start the containers
+Spring Boot’s Docker Compose integration will automatically start the MySQL container, apply the Flyway migrations, and connect the application to the database.
 
-Use `docker compose --profile deploy up --build -d`.
+## How to deploy
+
+The application can be deployed using Docker Compose.
+
+## Start the application
+
+Use `docker compose --profile deploy up --build -d`
+
+Verify the application runs at: `http://localhost:8080/swagger-ui/index.html`
 
 This starts:
 - **MySQL** on port `3306`
-- **API** on port `8080`
+- **James Bond Movies API** on port `8080`
 
-### Stop the containers
+## Stop the application
 
 Use `docker compose --profile deploy down`
 
-If you need to remove the MySQL volume as well use `docker compose --profile deploy down -v`
+To remove the MySQL data volume as well: `docker compose --profile deploy down -v`
 
-## API Documentation
+# API Documentation
 
 When the API is running locally, interactive API documentation is available through Swagger UI.
 
@@ -50,9 +69,9 @@ When the API is running locally, interactive API documentation is available thro
 
 Swagger UI allows you to explore the available endpoints and execute requests directly from the browser.
 
-### Authentication
+## Authentication
 
-Since API is protected with an API key (set in your `.env` file), you should include the API key in the request header `X-API-Key`.
+Since the API is protected with an API key (set in your `.env` file), you should include the API key in the request header `X-API-Key`.
 
 In the Swagger UI, click **Authorize** and enter your API key to authenticate requests.
 
@@ -68,7 +87,7 @@ X-API-Key: your-very-long-random-api-key
 
 ```bash
 curl -H "X-API-Key: your-very-long-random-api-key" \
-http://localhost:8080/api/movies
+  http://localhost:8080/api/movies
 ```
 
 ---
