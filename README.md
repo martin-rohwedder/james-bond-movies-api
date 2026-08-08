@@ -10,13 +10,13 @@ REST API built with Spring Boot for James Bond movies, directors, producers, act
 
 # How to get started
 
-## Prerequisites
+### Prerequisites
 
 - Java 25
 - Docker Desktop
 - IntelliJ IDEA (Recommended)
 
-## Run locally
+### Run locally
 
 1. Clone the repository.
 
@@ -24,6 +24,10 @@ REST API built with Spring Boot for James Bond movies, directors, producers, act
 - `cd james-bond-movies-api`
 
 2. Create a `.env` file in the project root.
+
+- `cp .env.example .env`
+
+3. Edit `.env` and replace the placeholder values
 
 ```dotenv
 MYSQL_DATABASE=jb_api_db
@@ -34,27 +38,34 @@ MYSQL_ROOT_PASSWORD=verysecret
 API_KEY=your-very-long-random-api-key
 ```
 
-3. Replace the MySQL credentials and API key with your preferred values.
 4. Open the project in IntelliJ IDEA.
 5. Start the Spring Boot application from IntelliJ.
 
 Spring Boot’s Docker Compose integration will automatically start the MySQL container, apply the Flyway migrations, and connect the application to the database.
 
-## How to deploy
+# How to deploy
 
 The application can be deployed using Docker Compose.
 
-## Start the application
+## Prerequisites
+
+- Docker Desktop (Or Docker Engine on a server)
+
+### 1. Create a `.env` file
+
+Ensure a `.env` file exists (for example by running `cp .env.example .env` and updating the values)
+
+### 2. Start the application
 
 Use `docker compose --profile deploy up --build -d`
-
-Verify the application runs at: `http://localhost:8080/swagger-ui/index.html`
 
 This starts:
 - **MySQL** on port `3306`
 - **James Bond Movies API** on port `8080`
 
-## Stop the application
+Verify the deployment at: `http://localhost:8080/swagger-ui/index.html`
+
+### Stop the application
 
 Use `docker compose --profile deploy down`
 
