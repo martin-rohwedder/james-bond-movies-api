@@ -130,34 +130,60 @@ To remove the MySQL data volume as well: `docker compose --profile deploy down -
 
 # API Documentation
 
-When the API is running locally, interactive API documentation is available through Swagger UI.
+When the API is running locally, interactive API documentation is available through **Swagger UI**.
 
-- Swagger UI: http://localhost:8080/swagger-ui/index.html
-- OpenAPI JSON: http://localhost:8080/v3/api-docs
+- **Swagger UI:** http://localhost:8080/swagger-ui/index.html
+- **OpenAPI JSON:** http://localhost:8080/v3/api-docs
 
 Swagger UI allows you to explore the available endpoints and execute requests directly from the browser.
 
 ## Authentication
 
-Since the API is protected with an API key (set in your `.env` file), you should include the API key in the request header `X-API-Key`.
+All API endpoints (except the documentation endpoints) require an **API key**.
 
-In the Swagger UI, click **Authorize** and enter your API key to authenticate requests.
-
-*Example request:*
-
-```bash
-GET /api/movies HTTP/1.1
-Host: localhost:8080
-X-API-Key: your-very-long-random-api-key
-```
-
-*Example with curl:*
+Include the API key in the **X-API-Key request header**.
 
 ```bash
 curl -H "X-API-Key: your-very-long-random-api-key" \
   http://localhost:8080/api/movies
 ```
 
----
+In Swagger UI, click **Authorize** and enter your API key once. It will automatically be included in subsequent requests.
+
+## Endpoint Overview
+
+An overview of all endpoints
+
+### Movies
+
+| **Method** 	| **Endpoint**       	| **Description**   	|
+|------------	|--------------------	|-------------------	|
+| GET        	| `/api/movies`      	| List all movies   	|
+| GET        	| `/api/movies/{id}` 	| Get a movie by id 	|
+
+### Actors
+
+| **Method** 	| **Endpoint**       	                                        | **Description**   	                     |
+|------------	|------------------------------------------------------------|----------------------------------------|
+| GET        	| `/api/actors`      	                                        | List all actors   	                     |
+| GET        	| `/api/actors/{id}` 	                                        | Get an actor by id 	                    |
+| GET        	| `/api/actors?name={actor_name}`	                            | Get an actor by name	                   |
+| GET        	| `/api/actors?name={actor_name}&includeMovies={true/false}`	 | Get an actor by name	and include movies |
+
+### Directors
+
+| **Method** 	| **Endpoint**       	                    | **Description**   	      |
+|------------	|----------------------------------------|-------------------------|
+| GET        	| `/api/directors`      	                 | List all directors   	   |
+| GET        	| `/api/directors/{id}` 	                 | Get a director by id 	   |
+| GET        	| `/api/directors?name={director_name}` 	 | Get a director by name 	 |
+
+### Producers
+
+| **Method** 	| **Endpoint**       	                    | **Description**   	      |
+|------------	|----------------------------------------|-------------------------|
+| GET        	| `/api/producers`      	                 | List all producers   	   |
+| GET        	| `/api/prodcuers/{id}` 	                 | Get a producer by id 	   |
+| GET        	| `/api/producers?name={producer_name}` 	 | Get a producer by name 	 |
 
 &copy; 2026 Martin Rohwedder
