@@ -7,8 +7,7 @@ COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw .
 
-RUN chmod +x mvnw
-RUN ./mvnw dependency:go-offline
+RUN chmod +x mvnw && ./mvnw dependency:go-offline
 
 COPY src src
 
@@ -17,16 +16,8 @@ RUN ./mvnw clean package -DskipTests
 # Create a custom Java runtime
 FROM eclipse-temurin:25-jdk-alpine AS jre-build
 
-COPY --from=build /app/target/*.jar /app.jar
-
-RUN jdeps \
-    --ignore-missing-deps \
-    --recursive \
-    --multi-release 25 \
-    --print-module-deps /app.jar > /modules.txt
-
 RUN $JAVA_HOME/bin/jlink \
-    --add-modules $(cat /modules.txt) \
+    --add-modules java.base,java.desktop,java.logging,java.naming,java.sql,java.xml,java.management,java.instrument,java.security.jgss,java.net.http,java.compiler,jdk.unsupported \
     --strip-debug \
     --compress=2 \
     --no-header-files \
@@ -41,14 +32,14 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 
 COPY --from=jre-build /javaruntime $JAVA_HOME
 
+RUN addgroup -S spring && adduser -S spring -G spring
+
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar /app.jar
-
-RUN addgroup -S spring && adduser -S spring -G spring
+COPY --from=build --chown=spring:spring /app/target/*.jar /app.jar
 
 USER spring
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
