@@ -81,7 +81,7 @@ services:
 
   jb_api:
     profiles: [ "deploy" ]
-    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.1.0
+    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.2.0
     restart: on-failure:3
     depends_on:
       mysql:

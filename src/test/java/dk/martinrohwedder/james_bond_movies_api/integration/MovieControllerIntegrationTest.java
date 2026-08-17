@@ -41,6 +41,41 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void should_return_technical_specifications_by_default() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].technical_specifications").isMap())
+                .andExpect(jsonPath("$[0].technical_specifications.runtime_in_minutes").isNumber())
+                .andExpect(jsonPath("$[0].technical_specifications.sound_mix").isString())
+                .andExpect(jsonPath("$[0].technical_specifications.aspect_ratio").isString())
+                .andExpect(jsonPath("$[0].technical_specifications.printed_film_format").isString());
+    }
+
+    @Test
+    void should_return_technical_specifications_without_nested_movie() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].technical_specifications.movie").doesNotExist());
+    }
+
+    @Test
+    void should_return_box_office_by_default() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].box_office").isMap())
+                .andExpect(jsonPath("$[0].box_office.budget_usd").isNumber())
+                .andExpect(jsonPath("$[0].box_office.gross_revenue_us_and_canada_usd").isNumber())
+                .andExpect(jsonPath("$[0].box_office.gross_revenue_worldwide_usd").isNumber());
+    }
+
+    @Test
+    void should_return_box_office_without_nested_movie() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].box_office.movie").doesNotExist());
+    }
+
+    @Test
     void should_return_same_result_as_default_when_query_parameters_are_false() throws Exception {
         getWithParams("excludeActors", "false", "excludeProducers", "false")
                 .andExpect(status().isOk())
@@ -94,11 +129,13 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_keep_director_and_music_when_excluding_actors_and_producers() throws Exception {
+    void should_keep_director_music_box_office_and_technical_specifications_when_excluding_actors_and_producers() throws Exception {
         getWithParams("excludeActors", "true", "excludeProducers", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].director.name").exists())
                 .andExpect(jsonPath("$[0].music.title").exists())
+                .andExpect(jsonPath("$[0].box_office.budget_usd").exists())
+                .andExpect(jsonPath("$[0].technical_specifications.runtime_in_minutes").exists())
                 .andExpect(jsonPath("$[0].actors").isEmpty())
                 .andExpect(jsonPath("$[0].producers").isEmpty());
     }
@@ -151,8 +188,38 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.locations").value(movie.getLocations()))
                 .andExpect(jsonPath("$.actors").isArray())
                 .andExpect(jsonPath("$.actors.length()").value(movie.getActors().size()))
+                .andExpect(jsonPath("$.box_office.budget_usd").value(movie.getBoxOffice().getBudgetUsd()))
+                .andExpect(jsonPath("$.box_office.gross_revenue_us_and_canada_usd").value(movie.getBoxOffice().getGrossRevenueUsAndCanadaUsd()))
+                .andExpect(jsonPath("$.box_office.gross_revenue_worldwide_usd").value(movie.getBoxOffice().getGrossRevenueWorldwideUsd()))
+                .andExpect(jsonPath("$.technical_specifications.runtime_in_minutes").value(movie.getTechnicalSpecifications().getRuntimeInMinutes()))
+                .andExpect(jsonPath("$.technical_specifications.sound_mix").value(movie.getTechnicalSpecifications().getSoundMix()))
+                .andExpect(jsonPath("$.technical_specifications.aspect_ratio").value(movie.getTechnicalSpecifications().getAspectRatio()))
+                .andExpect(jsonPath("$.technical_specifications.printed_film_format").value(movie.getTechnicalSpecifications().getPrintedFilmFormat()))
                 .andExpect(jsonPath("$.created_at").isNotEmpty())
                 .andExpect(jsonPath("$.updated_at").isNotEmpty());
+    }
+
+    @Test
+    void should_return_technical_specifications_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getById(movie.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.technical_specifications.runtime_in_minutes").value(movie.getTechnicalSpecifications().getRuntimeInMinutes()))
+                .andExpect(jsonPath("$.technical_specifications.sound_mix").value(movie.getTechnicalSpecifications().getSoundMix()))
+                .andExpect(jsonPath("$.technical_specifications.aspect_ratio").value(movie.getTechnicalSpecifications().getAspectRatio()))
+                .andExpect(jsonPath("$.technical_specifications.printed_film_format").value(movie.getTechnicalSpecifications().getPrintedFilmFormat()));
+    }
+
+    @Test
+    void should_return_box_office_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getById(movie.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.box_office.budget_usd").value(movie.getBoxOffice().getBudgetUsd()))
+                .andExpect(jsonPath("$.box_office.gross_revenue_us_and_canada_usd").value(movie.getBoxOffice().getGrossRevenueUsAndCanadaUsd()))
+                .andExpect(jsonPath("$.box_office.gross_revenue_worldwide_usd").value(movie.getBoxOffice().getGrossRevenueWorldwideUsd()));
     }
 
     @Test
