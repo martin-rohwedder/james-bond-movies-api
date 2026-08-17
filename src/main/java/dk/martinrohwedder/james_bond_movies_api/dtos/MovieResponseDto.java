@@ -19,6 +19,7 @@ public record MovieResponseDto(
         List<ProducerResponseDto> producers,
         String locations,
         List<ActorResponseDto> actors,
+        TechnicalSpecificationsResponseDto technicalSpecifications,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 )
