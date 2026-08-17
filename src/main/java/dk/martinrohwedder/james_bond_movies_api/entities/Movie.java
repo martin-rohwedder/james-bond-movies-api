@@ -75,6 +75,10 @@ public class Movie {
     private List<Actor> actors = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "box_office_id", referencedColumnName = "id")
+    private BoxOffice boxOffice;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "technical_specifications_id", referencedColumnName = "id")
     private TechnicalSpecifications technicalSpecifications;
 
@@ -120,5 +124,14 @@ public class Movie {
     public void addTechnicalSpecifications(TechnicalSpecifications technicalSpecifications) {
         this.technicalSpecifications = technicalSpecifications;
         technicalSpecifications.setMovie(this);
+    }
+
+    /**************************************************************************************************
+     /* Convenience method for adding bidirectional relationship between movie and box office entities.
+     **************************************************************************************************/
+
+    public void addBoxOffice(BoxOffice boxOffice) {
+        this.boxOffice = boxOffice;
+        boxOffice.setMovie(this);
     }
 }
