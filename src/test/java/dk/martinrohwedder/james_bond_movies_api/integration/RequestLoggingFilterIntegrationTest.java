@@ -28,7 +28,8 @@ class RequestLoggingFilterIntegrationTest extends AbstractIntegrationTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "/swagger-ui/index.html",
-            "/v3/api-docs"
+            "/v3/api-docs",
+            "/actuator/health"
     })
     void should_not_require_api_key_for_excluded_paths(String path) throws Exception {
         getPathWithoutApiKey(path)

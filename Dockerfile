@@ -32,6 +32,7 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 
 COPY --from=jre-build /javaruntime $JAVA_HOME
 
+RUN apk add --no-cache wget
 RUN addgroup -S spring && adduser -S spring -G spring
 
 WORKDIR /app

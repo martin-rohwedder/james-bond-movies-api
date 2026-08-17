@@ -77,10 +77,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 20s
 
   jb_api:
     profiles: [ "deploy" ]
-    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.0.0
+    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.1.0
     restart: on-failure:3
     depends_on:
       mysql:
@@ -92,6 +93,12 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
       APP_SECURITY_API_KEY: ${API_KEY}
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
 volumes:
   jb_api_mysql_data:
@@ -185,5 +192,11 @@ An overview of all endpoints
 | GET        	| `/api/producers`      	                 | List all producers   	   |
 | GET        	| `/api/prodcuers/{id}` 	                 | Get a producer by id 	   |
 | GET        	| `/api/producers?name={producer_name}` 	 | Get a producer by name 	 |
+
+### Actuator Monitoring
+
+| **Method** 	| **Endpoint**       	                    | **Description**   	 |
+|------------	|----------------------------------------|-------------------|
+| GET        	| `/actuator/health`      	               | App health status |
 
 &copy; 2026 Martin Rohwedder
