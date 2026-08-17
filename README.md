@@ -199,4 +199,6 @@ An overview of all endpoints
 |------------	|----------------------------------------|-------------------|
 | GET        	| `/actuator/health`      	               | App health status |
 
+---
+
 &copy; 2026 Martin Rohwedder
