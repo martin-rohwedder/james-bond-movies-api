@@ -69,6 +69,13 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void should_return_content_rating_by_default() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].content_rating").isString());
+    }
+
+    @Test
     void should_return_box_office_without_nested_movie() throws Exception {
         getAll()
                 .andExpect(status().isOk())
@@ -169,6 +176,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.long_description").value(movie.getLongDescription()))
                 .andExpect(jsonPath("$.trailer_url").value(movie.getTrailerUrl()))
                 .andExpect(jsonPath("$.world_premiere").value(movie.getWorldPremiere()))
+                .andExpect(jsonPath("$.content_rating").value(movie.getContentRating()))
                 .andExpect(jsonPath("$.release_dates").isArray())
                 .andExpect(jsonPath("$.release_dates.length()").value(movie.getReleaseDates().size()))
                 .andExpect(jsonPath("$.release_dates[0].date_of_release").exists())

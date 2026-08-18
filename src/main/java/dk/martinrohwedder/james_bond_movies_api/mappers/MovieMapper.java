@@ -36,6 +36,7 @@ public interface MovieMapper {
                 dto.longDescription(),
                 dto.trailerUrl(),
                 dto.worldPremiere(),
+                dto.contentRating(),
                 dto.releaseDates(),
                 dto.music(),
                 dto.jamesBondActor(),

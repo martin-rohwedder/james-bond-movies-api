@@ -38,6 +38,9 @@ public class Movie {
     @Column(name = "world_premiere", length = 50)
     private String worldPremiere;
 
+    @Column(name = "content_rating", length = 10)
+    private String contentRating;
+
     @Builder.Default
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReleaseDate> releaseDates = new ArrayList<>();
