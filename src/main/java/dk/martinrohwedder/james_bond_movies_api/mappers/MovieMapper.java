@@ -15,7 +15,8 @@ import java.util.List;
                 ProducerMapper.class,
                 ActorMapper.class,
                 TechnicalSpecificationsMapper.class,
-                BoxOfficeMapper.class
+                BoxOfficeMapper.class,
+                ParentsGuideMapper.class
         }
 )
 public interface MovieMapper {
@@ -36,6 +37,8 @@ public interface MovieMapper {
                 dto.longDescription(),
                 dto.trailerUrl(),
                 dto.worldPremiere(),
+                dto.contentRating(),
+                dto.parentsGuide(),
                 dto.releaseDates(),
                 dto.music(),
                 dto.jamesBondActor(),

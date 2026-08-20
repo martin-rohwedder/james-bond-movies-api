@@ -38,6 +38,13 @@ public class Movie {
     @Column(name = "world_premiere", length = 50)
     private String worldPremiere;
 
+    @Column(name = "content_rating", length = 10)
+    private String contentRating;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "parents_guide_id", referencedColumnName = "id")
+    private ParentsGuide parentsGuide;
+
     @Builder.Default
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReleaseDate> releaseDates = new ArrayList<>();
@@ -133,5 +140,14 @@ public class Movie {
     public void addBoxOffice(BoxOffice boxOffice) {
         this.boxOffice = boxOffice;
         boxOffice.setMovie(this);
+    }
+
+    /*****************************************************************************************************
+     /* Convenience method for adding bidirectional relationship between movie and parents guide entities.
+     *****************************************************************************************************/
+
+    public void addParentsGuide(ParentsGuide parentsGuide) {
+        this.parentsGuide = parentsGuide;
+        parentsGuide.setMovie(this);
     }
 }
