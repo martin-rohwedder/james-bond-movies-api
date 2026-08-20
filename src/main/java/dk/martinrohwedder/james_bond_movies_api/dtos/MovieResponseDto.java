@@ -13,6 +13,7 @@ public record MovieResponseDto(
         String trailerUrl,
         String worldPremiere,
         String contentRating,
+        ParentsGuideResponseDto parentsGuide,
         List<ReleaseDateResponseDto> releaseDates,
         MusicResponseDto music,
         String jamesBondActor,

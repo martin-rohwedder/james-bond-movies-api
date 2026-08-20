@@ -69,6 +69,13 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void should_return_box_office_without_nested_movie() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].box_office.movie").doesNotExist());
+    }
+
+    @Test
     void should_return_content_rating_by_default() throws Exception {
         getAll()
                 .andExpect(status().isOk())
@@ -76,10 +83,22 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_return_box_office_without_nested_movie() throws Exception {
+    void should_return_parents_guide_by_default() throws Exception {
         getAll()
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].box_office.movie").doesNotExist());
+                .andExpect(jsonPath("$[0].parents_guide").isMap())
+                .andExpect(jsonPath("$[0].parents_guide.sex_and_nudity").isString())
+                .andExpect(jsonPath("$[0].parents_guide.violence_and_gore").isString())
+                .andExpect(jsonPath("$[0].parents_guide.profanity").isString())
+                .andExpect(jsonPath("$[0].parents_guide.alcohol_drugs_and_smoking").isString())
+                .andExpect(jsonPath("$[0].parents_guide.frightening_and_intense_scenes").isString());
+    }
+
+    @Test
+    void should_return_parents_guide_without_nested_movie() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].parents_guide.movie").doesNotExist());
     }
 
     @Test
@@ -136,12 +155,13 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_keep_director_music_box_office_and_technical_specifications_when_excluding_actors_and_producers() throws Exception {
+    void should_keep_director_music_box_office_parents_guide_and_technical_specifications_when_excluding_actors_and_producers() throws Exception {
         getWithParams("excludeActors", "true", "excludeProducers", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].director.name").exists())
                 .andExpect(jsonPath("$[0].music.title").exists())
                 .andExpect(jsonPath("$[0].box_office.budget_usd").exists())
+                .andExpect(jsonPath("$[0].parents_guide.sex_and_nudity").exists())
                 .andExpect(jsonPath("$[0].technical_specifications.runtime_in_minutes").exists())
                 .andExpect(jsonPath("$[0].actors").isEmpty())
                 .andExpect(jsonPath("$[0].producers").isEmpty());
@@ -177,6 +197,11 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.trailer_url").value(movie.getTrailerUrl()))
                 .andExpect(jsonPath("$.world_premiere").value(movie.getWorldPremiere()))
                 .andExpect(jsonPath("$.content_rating").value(movie.getContentRating()))
+                .andExpect(jsonPath("$.parents_guide.sex_and_nudity").value(movie.getParentsGuide().getSexAndNudity()))
+                .andExpect(jsonPath("$.parents_guide.violence_and_gore").value(movie.getParentsGuide().getViolenceAndGore()))
+                .andExpect(jsonPath("$.parents_guide.profanity").value(movie.getParentsGuide().getProfanity()))
+                .andExpect(jsonPath("$.parents_guide.alcohol_drugs_and_smoking").value(movie.getParentsGuide().getAlcoholDrugsAndSmoking()))
+                .andExpect(jsonPath("$.parents_guide.frightening_and_intense_scenes").value(movie.getParentsGuide().getFrighteningAndIntenseScenes()))
                 .andExpect(jsonPath("$.release_dates").isArray())
                 .andExpect(jsonPath("$.release_dates.length()").value(movie.getReleaseDates().size()))
                 .andExpect(jsonPath("$.release_dates[0].date_of_release").exists())
@@ -228,6 +253,19 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.box_office.budget_usd").value(movie.getBoxOffice().getBudgetUsd()))
                 .andExpect(jsonPath("$.box_office.gross_revenue_us_and_canada_usd").value(movie.getBoxOffice().getGrossRevenueUsAndCanadaUsd()))
                 .andExpect(jsonPath("$.box_office.gross_revenue_worldwide_usd").value(movie.getBoxOffice().getGrossRevenueWorldwideUsd()));
+    }
+
+    @Test
+    void should_return_parents_guide_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getById(movie.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.parents_guide.sex_and_nudity").value(movie.getParentsGuide().getSexAndNudity()))
+                .andExpect(jsonPath("$.parents_guide.violence_and_gore").value(movie.getParentsGuide().getViolenceAndGore()))
+                .andExpect(jsonPath("$.parents_guide.profanity").value(movie.getParentsGuide().getProfanity()))
+                .andExpect(jsonPath("$.parents_guide.alcohol_drugs_and_smoking").value(movie.getParentsGuide().getAlcoholDrugsAndSmoking()))
+                .andExpect(jsonPath("$.parents_guide.frightening_and_intense_scenes").value(movie.getParentsGuide().getFrighteningAndIntenseScenes()));
     }
 
     @Test
