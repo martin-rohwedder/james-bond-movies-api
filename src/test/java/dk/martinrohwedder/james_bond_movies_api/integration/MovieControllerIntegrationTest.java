@@ -41,6 +41,21 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void should_return_trivias_by_default() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].trivias").isArray())
+                .andExpect(jsonPath("$[0].trivias[0].content").isString());
+    }
+
+    @Test
+    void should_return_trivias_without_nested_movie() throws Exception {
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].trivias[0].movie").doesNotExist());
+    }
+
+    @Test
     void should_return_technical_specifications_by_default() throws Exception {
         getAll()
                 .andExpect(status().isOk())
@@ -221,6 +236,9 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.locations").value(movie.getLocations()))
                 .andExpect(jsonPath("$.actors").isArray())
                 .andExpect(jsonPath("$.actors.length()").value(movie.getActors().size()))
+                .andExpect(jsonPath("$.trivias").isArray())
+                .andExpect(jsonPath("$.trivias.length()").value(movie.getTrivias().size()))
+                .andExpect(jsonPath("$.trivias[0].content").value(movie.getTrivias().getFirst().getContent()))
                 .andExpect(jsonPath("$.box_office.budget_usd").value(movie.getBoxOffice().getBudgetUsd()))
                 .andExpect(jsonPath("$.box_office.gross_revenue_us_and_canada_usd").value(movie.getBoxOffice().getGrossRevenueUsAndCanadaUsd()))
                 .andExpect(jsonPath("$.box_office.gross_revenue_worldwide_usd").value(movie.getBoxOffice().getGrossRevenueWorldwideUsd()))

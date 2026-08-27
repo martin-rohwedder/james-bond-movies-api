@@ -14,6 +14,7 @@ import java.util.List;
                 ReleaseDateMapper.class,
                 ProducerMapper.class,
                 ActorMapper.class,
+                TriviaMapper.class,
                 TechnicalSpecificationsMapper.class,
                 BoxOfficeMapper.class,
                 ParentsGuideMapper.class
@@ -46,6 +47,7 @@ public interface MovieMapper {
                 excludeProducers ? List.of() : dto.producers(),
                 dto.locations(),
                 excludeActors ? List.of() : dto.actors(),
+                dto.trivias(),
                 dto.boxOffice(),
                 dto.technicalSpecifications(),
                 dto.createdAt(),
