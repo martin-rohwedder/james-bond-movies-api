@@ -34,12 +34,17 @@ public class MovieService {
     }
 
     /**
-     * Get a specific movie with all its data by id
+     * Get a specific movie by id
      */
-    public Optional<MovieResponseDto> getMovieById(UUID id) {
-        log.debug("Fetching movie with id {}", id);
+    public Optional<MovieResponseDto> getMovieById(UUID id, boolean excludeActors, boolean excludeProducers, boolean excludeTrivias) {
+        log.debug("Fetching movie with id {} and the following exclusions [actors={}, producers={}, trivias={}]", id, excludeActors, excludeProducers, excludeTrivias);
 
         return movieRepository.findById(id)
-                .map(movieMapper::movieToMovieResponseDto);
+                .map(movie -> movieMapper.movieToMovieResponseDto(
+                        movie,
+                        excludeActors,
+                        excludeProducers,
+                        excludeTrivias
+                ));
     }
 }

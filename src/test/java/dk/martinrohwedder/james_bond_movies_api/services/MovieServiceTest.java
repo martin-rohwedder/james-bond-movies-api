@@ -79,7 +79,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void should_pass_exclude_actors_flag_to_mapper() {
+    void should_pass_exclude_actors_flag_to_mapper_when_getting_all_movies() {
         // Arrange
         Movie movie = createMovieEntity();
         MovieResponseDto dto = mock(MovieResponseDto.class);
@@ -100,7 +100,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void should_pass_exclude_producers_flag_to_mapper() {
+    void should_pass_exclude_producers_flag_to_mapper_when_getting_all_movies() {
         // Arrange
         Movie movie = createMovieEntity();
         MovieResponseDto dto = mock(MovieResponseDto.class);
@@ -121,7 +121,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void should_pass_exclude_trivias_flag_to_mapper() {
+    void should_pass_exclude_trivias_flag_to_mapper_when_getting_all_movies() {
         // Arrange
         Movie movie = createMovieEntity();
         MovieResponseDto dto = mock(MovieResponseDto.class);
@@ -142,7 +142,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void should_pass_all_exclusion_flags_to_mapper() {
+    void should_pass_all_exclusion_flags_to_mapper_when_getting_all_movies() {
         // Arrange
         Movie movie = createMovieEntity();
         MovieResponseDto dto = mock(MovieResponseDto.class);
@@ -190,7 +190,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void should_return_movie_by_id() {
+    void should_return_movie_by_id_without_exclusions() {
         // Arrange
         UUID id = UUID.randomUUID();
         Movie movie = createMovieEntity();
@@ -199,17 +199,113 @@ class MovieServiceTest {
         when(movieRepository.findById(id))
                 .thenReturn(Optional.of(movie));
 
-        when(movieMapper.movieToMovieResponseDto(movie))
+        when(movieMapper.movieToMovieResponseDto(movie, false, false, false))
                 .thenReturn(dto);
 
         // Act
-        Optional<MovieResponseDto> result = movieService.getMovieById(id);
+        Optional<MovieResponseDto> result = movieService.getMovieById(id, false, false, false);
 
         // Assert
         assertThat(result).contains(dto);
 
         verify(movieRepository).findById(id);
-        verify(movieMapper).movieToMovieResponseDto(movie);
+        verify(movieMapper).movieToMovieResponseDto(movie, false, false, false);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_pass_exclude_actors_flag_to_mapper_when_getting_movie_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieResponseDto dto = mock(MovieResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieResponseDto(movie, true, false, false))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieResponseDto> result = movieService.getMovieById(id, true, false, false);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieResponseDto(movie, true, false, false);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_pass_exclude_producers_flag_to_mapper_when_getting_movie_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieResponseDto dto = mock(MovieResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieResponseDto(movie, false, true, false))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieResponseDto> result = movieService.getMovieById(id, false, true, false);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieResponseDto(movie, false, true, false);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_pass_exclude_trivias_flag_to_mapper_when_getting_movie_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieResponseDto dto = mock(MovieResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieResponseDto(movie, false, false, true))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieResponseDto> result = movieService.getMovieById(id, false, false, true);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieResponseDto(movie, false, false, true);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_pass_all_exclusion_flags_to_mapper_when_getting_movie_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieResponseDto dto = mock(MovieResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieResponseDto(movie, true, true, true))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieResponseDto> result = movieService.getMovieById(id, true, true, true);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieResponseDto(movie, true, true, true);
         verifyNoMoreInteractions(movieRepository, movieMapper);
     }
 
@@ -222,7 +318,7 @@ class MovieServiceTest {
                 .thenReturn(Optional.empty());
 
         // Act
-        Optional<MovieResponseDto> result = movieService.getMovieById(id);
+        Optional<MovieResponseDto> result = movieService.getMovieById(id, false, false, false);
 
         // Assert
         assertThat(result).isEmpty();
