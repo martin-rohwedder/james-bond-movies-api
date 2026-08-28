@@ -81,6 +81,15 @@ public class Movie {
     )
     private List<Actor> actors = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(
+            mappedBy = "movie",
+            fetch =  FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Trivia> trivias = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "box_office_id", referencedColumnName = "id")
     private BoxOffice boxOffice;
@@ -149,5 +158,14 @@ public class Movie {
     public void addParentsGuide(ParentsGuide parentsGuide) {
         this.parentsGuide = parentsGuide;
         parentsGuide.setMovie(this);
+    }
+
+    /**********************************************************************************************
+     /* Convenience method for adding bidirectional relationship between movie and trivia entities.
+     **********************************************************************************************/
+
+    public void addTrivia(Trivia trivia) {
+        trivias.add(trivia);
+        trivia.setMovie(this);
     }
 }

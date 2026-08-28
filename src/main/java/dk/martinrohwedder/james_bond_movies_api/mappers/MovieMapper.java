@@ -14,6 +14,7 @@ import java.util.List;
                 ReleaseDateMapper.class,
                 ProducerMapper.class,
                 ActorMapper.class,
+                TriviaMapper.class,
                 TechnicalSpecificationsMapper.class,
                 BoxOfficeMapper.class,
                 ParentsGuideMapper.class
@@ -25,7 +26,8 @@ public interface MovieMapper {
     default MovieResponseDto movieToMovieResponseDto(
             Movie movie,
             boolean excludeActors,
-            boolean excludeProducers
+            boolean excludeProducers,
+            boolean excludeTrivias
     ) {
         MovieResponseDto dto = movieToMovieResponseDto(movie);
 
@@ -46,6 +48,7 @@ public interface MovieMapper {
                 excludeProducers ? List.of() : dto.producers(),
                 dto.locations(),
                 excludeActors ? List.of() : dto.actors(),
+                excludeTrivias ? List.of() : dto.trivias(),
                 dto.boxOffice(),
                 dto.technicalSpecifications(),
                 dto.createdAt(),

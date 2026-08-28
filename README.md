@@ -1,7 +1,7 @@
 [![Java CI with Maven](https://github.com/martin-rohwedder/james-bond-movies-api/actions/workflows/maven.yml/badge.svg)](https://github.com/martin-rohwedder/james-bond-movies-api/actions/workflows/maven.yml)
 ![Coverage](.github/badges/jacoco.svg)
 ![Java](https://img.shields.io/badge/Java-25-d15e5c?logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?logo=springboot&logoColor=6DB33F)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6DB33F?logo=springboot&logoColor=6DB33F)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=a5cae6)
 
 # James Bond Movies API
@@ -81,7 +81,7 @@ services:
 
   jb_api:
     profiles: [ "deploy" ]
-    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.3.0
+    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.4.0
     restart: on-failure:3
     depends_on:
       mysql:
@@ -163,10 +163,12 @@ An overview of all endpoints
 
 ### Movies
 
-| **Method** 	| **Endpoint**       	| **Description**   	|
-|------------	|--------------------	|-------------------	|
-| GET        	| `/api/movies`      	| List all movies   	|
-| GET        	| `/api/movies/{id}` 	| Get a movie by id 	|
+| **Method** 	| **Endpoint**       	                                                                                      | **Description**   	                                                  |
+|------------	|----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| GET        	| `/api/movies`      	                                                                                      | List all movies (defaults include actors, producers and trivias)   	 |
+| GET        	| `/api/movies?excludeActors={true/false}&excludeProducers={true/false}&excludeTrivias={true/false}`      	 | List all movies (optional exclusion of actors, producers and/or trivias) |
+| GET        	| `/api/movies/{id}` 	                                                                                      | Get a movie by id (defaults include actors, producers and trivias)   |
+| GET        	| `/api/movies/{id}?excludeActors={true/false}&excludeProducers={true/false}&excludeTrivias={true/false}` 	 | Get a movie by id (optional exclusions of actors, producers and/or trivias |
 
 ### Actors
 

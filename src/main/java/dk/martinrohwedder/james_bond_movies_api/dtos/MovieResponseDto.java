@@ -21,6 +21,7 @@ public record MovieResponseDto(
         List<ProducerResponseDto> producers,
         String locations,
         List<ActorResponseDto> actors,
+        List<TriviaResponseDto> trivias,
         BoxOfficeResponseDto boxOffice,
         TechnicalSpecificationsResponseDto technicalSpecifications,
         LocalDateTime createdAt,

@@ -53,6 +53,16 @@ public abstract class AbstractIntegrationTest {
                 .header("X-API-Key", this.apiKey));
     }
 
+    protected ResultActions getByIdWithParams(UUID id, String... params) throws Exception {
+        var request = get(baseUrl() + "/{id}", id).header("X-API-Key", this.apiKey);
+
+        for (int i = 0; i < params.length; i += 2) {
+            request.param(params[i], params[i + 1]);
+        }
+
+        return mockMvc.perform(request);
+    }
+
     protected ResultActions getById(String id) throws Exception {
         return mockMvc.perform(get(baseUrl() + "/{id}", id)
                 .header("X-API-Key", this.apiKey));

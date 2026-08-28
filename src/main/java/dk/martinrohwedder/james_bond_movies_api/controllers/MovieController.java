@@ -23,17 +23,24 @@ public class MovieController {
     @GetMapping
     public ResponseEntity<List<MovieResponseDto>> getAllMovies(
             @RequestParam(name = "excludeActors", defaultValue = "false") boolean excludeActors,
-            @RequestParam(name = "excludeProducers", defaultValue = "false") boolean excludeProducers
+            @RequestParam(name = "excludeProducers", defaultValue = "false") boolean excludeProducers,
+            @RequestParam(name ="excludeTrivias", defaultValue = "false") boolean excludeTrivias
     )
     {
-        return ResponseEntity.ok(movieService.getAllMovies(excludeActors, excludeProducers));
+        return ResponseEntity.ok(movieService.getAllMovies(excludeActors, excludeProducers, excludeTrivias));
     }
 
     // GET: /api/movies/{id}
     @Operation(summary = "Get movie by id")
     @GetMapping("/{id}")
-    public ResponseEntity<MovieResponseDto> getMovieById(@PathVariable UUID id) {
-        return movieService.getMovieById(id)
+    public ResponseEntity<MovieResponseDto> getMovieById(
+            @PathVariable UUID id,
+            @RequestParam(name = "excludeActors", defaultValue = "false") boolean excludeActors,
+            @RequestParam(name = "excludeProducers", defaultValue = "false") boolean excludeProducers,
+            @RequestParam(name = "excludeTrivias", defaultValue = "false") boolean excludeTrivias
+    )
+    {
+        return movieService.getMovieById(id, excludeActors, excludeProducers, excludeTrivias)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
