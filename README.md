@@ -163,10 +163,11 @@ An overview of all endpoints
 
 ### Movies
 
-| **Method** 	| **Endpoint**       	| **Description**   	|
-|------------	|--------------------	|-------------------	|
-| GET        	| `/api/movies`      	| List all movies   	|
-| GET        	| `/api/movies/{id}` 	| Get a movie by id 	|
+| **Method** 	| **Endpoint**       	                                                                                      | **Description**   	                                                          |
+|------------	|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| GET        	| `/api/movies`      	                                                                                      | List all movies (defaults include actors, producers and trivias)   	         |
+| GET        	| `/api/movies?excludeActors={true/false}&excludeProducers={true/false}&excludeTrivias={true/false}`      	 | List all movies (optional exclusion af actors, producers and/or trivias)   	 |
+| GET        	| `/api/movies/{id}` 	                                                                                      | Get a movie by id 	                                                          |
 
 ### Actors
 

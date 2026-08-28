@@ -33,11 +33,12 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_return_actors_and_producers_by_default() throws Exception {
+    void should_return_actors_and_producers_and_trivias_by_default() throws Exception {
         getAll()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].actors").isArray())
-                .andExpect(jsonPath("$[0].producers").isArray());
+                .andExpect(jsonPath("$[0].producers").isArray())
+                .andExpect(jsonPath("$[0].trivias").isArray());
     }
 
     @Test
@@ -118,60 +119,98 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_same_result_as_default_when_query_parameters_are_false() throws Exception {
-        getWithParams("excludeActors", "false", "excludeProducers", "false")
+        getWithParams("excludeActors", "false", "excludeProducers", "false", "excludeTrivias", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].actors").isArray())
-                .andExpect(jsonPath("$[0].producers").isArray());
+                .andExpect(jsonPath("$[0].producers").isArray())
+                .andExpect(jsonPath("$[0].trivias").isArray());
     }
 
     @Test
     void should_exclude_actors_from_movies_when_query_parameter_is_true() throws Exception {
-        getWithParams("excludeActors", "true", "excludeProducers", "false")
+        getWithParams("excludeActors", "true", "excludeProducers", "false", "excludeTrivias", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].actors").isEmpty())
-                .andExpect(jsonPath("$[0].producers").isArray());
+                .andExpect(jsonPath("$[0].producers").isArray())
+                .andExpect(jsonPath("$[0].trivias").isArray());
     }
 
     @Test
     void should_exclude_producers_from_movies_when_query_parameter_is_true() throws Exception {
-        getWithParams("excludeActors", "false", "excludeProducers", "true")
+        getWithParams("excludeActors", "false", "excludeProducers", "true", "excludeTrivias", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].producers").isEmpty())
-                .andExpect(jsonPath("$[0].actors").isArray());
+                .andExpect(jsonPath("$[0].actors").isArray())
+                .andExpect(jsonPath("$[0].trivias").isArray());
+    }
+
+    @Test
+    void should_exclude_trivias_from_movies_when_query_parameter_is_true() throws Exception {
+        getWithParams("excludeActors", "false", "excludeProducers", "false", "excludeTrivias", "true")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].producers").isArray())
+                .andExpect(jsonPath("$[0].actors").isArray())
+                .andExpect(jsonPath("$[0].trivias").isEmpty());
     }
 
     @Test
     void should_exclude_producers_and_actors_from_movies_when_query_parameters_is_true() throws Exception {
-        getWithParams("excludeActors", "true", "excludeProducers", "true")
+        getWithParams("excludeActors", "true", "excludeProducers", "true", "excludeTrivias", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].producers").isEmpty())
-                .andExpect(jsonPath("$[0].actors").isEmpty());
+                .andExpect(jsonPath("$[0].actors").isEmpty())
+                .andExpect(jsonPath("$[0].trivias").isArray());
+    }
+
+    @Test
+    void should_exclude_producers_and_trivias_from_movies_when_query_parameters_is_true() throws Exception {
+        getWithParams("excludeActors", "false", "excludeProducers", "true", "excludeTrivias", "true")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].producers").isEmpty())
+                .andExpect(jsonPath("$[0].actors").isArray())
+                .andExpect(jsonPath("$[0].trivias").isEmpty());
+    }
+
+    @Test
+    void should_exclude_actors_and_trivias_from_movies_when_query_parameters_is_true() throws Exception {
+        getWithParams("excludeActors", "true", "excludeProducers", "false", "excludeTrivias", "true")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].producers").isArray())
+                .andExpect(jsonPath("$[0].actors").isEmpty())
+                .andExpect(jsonPath("$[0].trivias").isEmpty());
     }
 
     @Test
     void should_not_change_number_of_movies_when_excluding_actors() throws Exception {
-        getWithParams("excludeActors", "true", "excludeProducers", "false")
+        getWithParams("excludeActors", "true", "excludeProducers", "false", "excludeTrivias", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedMovieCount()));
     }
 
     @Test
     void should_not_change_number_of_movies_when_excluding_producers() throws Exception {
-        getWithParams("excludeActors", "false", "excludeProducers", "true")
+        getWithParams("excludeActors", "false", "excludeProducers", "true", "excludeTrivias", "false")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedMovieCount()));
     }
 
     @Test
-    void should_not_change_number_of_movies_when_excluding_actors_and_producers() throws Exception {
-        getWithParams("excludeActors", "true", "excludeProducers", "true")
+    void should_not_change_number_of_movies_when_excluding_trivias() throws Exception {
+        getWithParams("excludeActors", "false", "excludeProducers", "false", "excludeTrivias", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedMovieCount()));
     }
 
     @Test
-    void should_keep_director_music_box_office_parents_guide_and_technical_specifications_when_excluding_actors_and_producers() throws Exception {
-        getWithParams("excludeActors", "true", "excludeProducers", "true")
+    void should_not_change_number_of_movies_when_excluding_actors_and_producers_and_trivias() throws Exception {
+        getWithParams("excludeActors", "true", "excludeProducers", "true", "excludeTrivias", "true")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(expectedMovieCount()));
+    }
+
+    @Test
+    void should_keep_director_music_box_office_parents_guide_and_technical_specifications_when_excluding_actors_and_producers_and_trivias() throws Exception {
+        getWithParams("excludeActors", "true", "excludeProducers", "true", "excludeTrivias", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].director.name").exists())
                 .andExpect(jsonPath("$[0].music.title").exists())
@@ -179,7 +218,8 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$[0].parents_guide.sex_and_nudity").exists())
                 .andExpect(jsonPath("$[0].technical_specifications.runtime_in_minutes").exists())
                 .andExpect(jsonPath("$[0].actors").isEmpty())
-                .andExpect(jsonPath("$[0].producers").isEmpty());
+                .andExpect(jsonPath("$[0].producers").isEmpty())
+                .andExpect(jsonPath("$[0].trivias").isEmpty());
     }
 
     @Test

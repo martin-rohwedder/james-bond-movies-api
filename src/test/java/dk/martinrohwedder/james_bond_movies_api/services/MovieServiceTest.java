@@ -49,17 +49,17 @@ class MovieServiceTest {
         when(movieRepository.findAllByOrderByMovieNumberAsc())
                 .thenReturn(List.of(movie));
 
-        when(movieMapper.movieToMovieResponseDto(movie, false, false))
+        when(movieMapper.movieToMovieResponseDto(movie, false, false, false))
                 .thenReturn(dto);
 
         // Act
-        List<MovieResponseDto> result = movieService.getAllMovies(false, false);
+        List<MovieResponseDto> result = movieService.getAllMovies(false, false, false);
 
         // Assert
         assertThat(result).containsExactly(dto);
 
         verify(movieRepository).findAllByOrderByMovieNumberAsc();
-        verify(movieMapper).movieToMovieResponseDto(movie, false, false);
+        verify(movieMapper).movieToMovieResponseDto(movie, false, false, false);
         verifyNoMoreInteractions(movieRepository, movieMapper);
     }
 
@@ -70,10 +70,10 @@ class MovieServiceTest {
 
         when(movieRepository.findAllByOrderByMovieNumberAsc())
                 .thenReturn(List.of(movie));
-        when(movieMapper.movieToMovieResponseDto(movie, false, false))
+        when(movieMapper.movieToMovieResponseDto(movie, false, false, false))
                 .thenReturn(dto);
 
-        movieService.getAllMovies(false, false);
+        movieService.getAllMovies(false, false, false);
 
         verify(movieRepository, times(1)).findAllByOrderByMovieNumberAsc();
     }
@@ -87,15 +87,15 @@ class MovieServiceTest {
         when(movieRepository.findAllByOrderByMovieNumberAsc())
                 .thenReturn(List.of(movie));
 
-        when(movieMapper.movieToMovieResponseDto(movie, true, false))
+        when(movieMapper.movieToMovieResponseDto(movie, true, false, false))
                 .thenReturn(dto);
 
         // Act
-        movieService.getAllMovies(true, false);
+        movieService.getAllMovies(true, false, false);
 
         // Assert
         verify(movieRepository).findAllByOrderByMovieNumberAsc();
-        verify(movieMapper).movieToMovieResponseDto(movie, true, false);
+        verify(movieMapper).movieToMovieResponseDto(movie, true, false, false);
         verifyNoMoreInteractions(movieRepository, movieMapper);
     }
 
@@ -108,20 +108,20 @@ class MovieServiceTest {
         when(movieRepository.findAllByOrderByMovieNumberAsc())
                 .thenReturn(List.of(movie));
 
-        when(movieMapper.movieToMovieResponseDto(movie, false, true))
+        when(movieMapper.movieToMovieResponseDto(movie, false, true, false))
                 .thenReturn(dto);
 
         // Act
-        movieService.getAllMovies(false, true);
+        movieService.getAllMovies(false, true, false);
 
         // Assert
         verify(movieRepository).findAllByOrderByMovieNumberAsc();
-        verify(movieMapper).movieToMovieResponseDto(movie, false, true);
+        verify(movieMapper).movieToMovieResponseDto(movie, false, true, false);
         verifyNoMoreInteractions(movieRepository, movieMapper);
     }
 
     @Test
-    void should_pass_both_exclusion_flags_to_mapper() {
+    void should_pass_exclude_trivias_flag_to_mapper() {
         // Arrange
         Movie movie = createMovieEntity();
         MovieResponseDto dto = mock(MovieResponseDto.class);
@@ -129,15 +129,36 @@ class MovieServiceTest {
         when(movieRepository.findAllByOrderByMovieNumberAsc())
                 .thenReturn(List.of(movie));
 
-        when(movieMapper.movieToMovieResponseDto(movie, true, true))
+        when(movieMapper.movieToMovieResponseDto(movie, false, false, true))
                 .thenReturn(dto);
 
         // Act
-        movieService.getAllMovies(true, true);
+        movieService.getAllMovies(false, false, true);
 
         // Assert
         verify(movieRepository).findAllByOrderByMovieNumberAsc();
-        verify(movieMapper).movieToMovieResponseDto(movie, true, true);
+        verify(movieMapper).movieToMovieResponseDto(movie, false, false, true);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_pass_all_exclusion_flags_to_mapper() {
+        // Arrange
+        Movie movie = createMovieEntity();
+        MovieResponseDto dto = mock(MovieResponseDto.class);
+
+        when(movieRepository.findAllByOrderByMovieNumberAsc())
+                .thenReturn(List.of(movie));
+
+        when(movieMapper.movieToMovieResponseDto(movie, true, true, true))
+                .thenReturn(dto);
+
+        // Act
+        movieService.getAllMovies(true, true, true);
+
+        // Assert
+        verify(movieRepository).findAllByOrderByMovieNumberAsc();
+        verify(movieMapper).movieToMovieResponseDto(movie, true, true, true);
         verifyNoMoreInteractions(movieRepository, movieMapper);
     }
 
@@ -153,18 +174,18 @@ class MovieServiceTest {
         when(movieRepository.findAllByOrderByMovieNumberAsc())
                 .thenReturn(List.of(movie1, movie2));
 
-        when(movieMapper.movieToMovieResponseDto(movie1, false, false)).thenReturn(dto1);
-        when(movieMapper.movieToMovieResponseDto(movie2, false, false)).thenReturn(dto2);
+        when(movieMapper.movieToMovieResponseDto(movie1, false, false, false)).thenReturn(dto1);
+        when(movieMapper.movieToMovieResponseDto(movie2, false, false, false)).thenReturn(dto2);
 
         // Act
-        List<MovieResponseDto> result = movieService.getAllMovies(false, false);
+        List<MovieResponseDto> result = movieService.getAllMovies(false, false, false);
 
         // Assert
         assertThat(result).containsExactly(dto1, dto2);
 
         verify(movieRepository).findAllByOrderByMovieNumberAsc();
-        verify(movieMapper).movieToMovieResponseDto(movie1, false, false);
-        verify(movieMapper).movieToMovieResponseDto(movie2, false, false);
+        verify(movieMapper).movieToMovieResponseDto(movie1, false, false, false);
+        verify(movieMapper).movieToMovieResponseDto(movie2, false, false, false);
         verifyNoMoreInteractions(movieRepository, movieMapper);
     }
 

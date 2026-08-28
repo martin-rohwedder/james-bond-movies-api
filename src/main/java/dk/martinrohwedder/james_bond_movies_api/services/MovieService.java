@@ -21,13 +21,14 @@ public class MovieService {
     /**
      * Get a list of all the movies
      */
-    public List<MovieResponseDto> getAllMovies(boolean excludeActors, boolean excludeProducers) {
+    public List<MovieResponseDto> getAllMovies(boolean excludeActors, boolean excludeProducers, boolean excludeTrivias) {
         return movieRepository.findAllByOrderByMovieNumberAsc()
                 .stream()
                 .map(movie -> movieMapper.movieToMovieResponseDto(
                         movie,
                         excludeActors,
-                        excludeProducers
+                        excludeProducers,
+                        excludeTrivias
                 ))
                 .toList();
     }
