@@ -23,8 +23,8 @@ public class MusicService {
         log.debug("Fetching all music for performer: {}", performer);
 
         var music = (performer == null || performer.isBlank())
-                ? musicRepository.findAll()
-                : musicRepository.findAllByPerformerIgnoreCase(performer);
+                ? musicRepository.findAllByOrderByPerformerAsc()
+                : musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc(performer);
 
         return music.stream()
                 .map(musicMapper::musicToMusicResponseDto)

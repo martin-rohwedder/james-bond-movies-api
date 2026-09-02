@@ -16,7 +16,7 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void should_return_music_by_id() {
-        Music expected = musicRepository.findAll().getFirst();
+        Music expected = musicRepository.findAllByOrderByPerformerAsc().getFirst();
 
         var result = musicRepository.findById(expected.getId());
 
@@ -35,8 +35,24 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
+    void should_return_all_music_ordered_by_performer() {
+        List<String> performers = musicRepository.findAllByOrderByPerformerAsc()
+                .stream()
+                .map(Music::getPerformer)
+                .toList();
+
+        assertThat(performers)
+                .isNotEmpty()
+                .startsWith(
+                        "A-ha",
+                        "Adele",
+                        "Billie Eilish"
+                );
+    }
+
+    @Test
     void should_return_music_by_performer() {
-        List<Music> result = musicRepository.findAllByPerformerIgnoreCase("Shirley Bassey");
+        List<Music> result = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("Shirley Bassey");
 
         assertThat(result)
                 .extracting(Music::getPerformer)
@@ -47,7 +63,7 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void should_return_music_by_performer_ignoring_case() {
-        List<Music> result = musicRepository.findAllByPerformerIgnoreCase("ShIrLey BASSey");
+        List<Music> result = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("ShIrLey BASSey");
 
         assertThat(result)
                 .extracting(Music::getPerformer)
@@ -58,8 +74,8 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void should_return_same_results_for_different_performer_name_casing() {
-        List<Music> lower = musicRepository.findAllByPerformerIgnoreCase("shirley bassey");
-        List<Music> mixed = musicRepository.findAllByPerformerIgnoreCase("ShIrLey BASSey");
+        List<Music> lower = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("shirley bassey");
+        List<Music> mixed = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("ShIrLey BASSey");
 
         assertThat(lower)
                 .extracting(Music::getId)
@@ -70,14 +86,14 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void should_return_empty_list_when_performer_name_is_not_found() {
-        List<Music> result = musicRepository.findAllByPerformerIgnoreCase("unknown performer");
+        List<Music> result = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("unknown performer");
 
         assertThat(result).isEmpty();
     }
 
     @Test
     void should_return_empty_list_when_performer_name_is_blank() {
-        List<Music> result = musicRepository.findAllByPerformerIgnoreCase("  ");
+        List<Music> result = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("  ");
 
         assertThat(result).isEmpty();
     }

@@ -26,7 +26,7 @@ public class MusicControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_music_by_id() throws Exception {
-        Music music = musicRepository.findAll().getFirst();
+        Music music = musicRepository.findAllByOrderByPerformerAsc().getFirst();
 
         getById(music.getId())
                 .andExpect(status().isOk())
@@ -36,7 +36,7 @@ public class MusicControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_complete_music_structure_by_id() throws Exception {
-        Music music = musicRepository.findAll().getFirst();
+        Music music = musicRepository.findAllByOrderByPerformerAsc().getFirst();
 
         getById(music.getId())
                 .andExpect(status().isOk())
@@ -64,16 +64,26 @@ public class MusicControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void should_return_all_music() throws Exception {
-        List<Music> musicList = musicRepository.findAll();
+        List<Music> musicList = musicRepository.findAllByOrderByPerformerAsc();
         Music music = musicList.getFirst();
 
         getAll()
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].id").value(music.getId().toString()))
-                .andExpect(jsonPath("$.[0].title").value(music.getTitle()))
+                .andExpect(jsonPath("$[0].id").value(music.getId().toString()))
+                .andExpect(jsonPath("$[0].title").value(music.getTitle()))
                 .andExpect(jsonPath("$[0].performer").value(music.getPerformer()))
                 .andExpect(jsonPath("$[0].song_url").value(music.getSongUrl()))
                 .andExpect(jsonPath("$.length()").value(musicList.size()));
+    }
+
+    @Test
+    void should_return_music_ordered_by_performer() throws Exception {
+        List<Music> musicList = musicRepository.findAllByOrderByPerformerAsc();
+
+        getAll()
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].performer").value(musicList.get(0).getPerformer()))
+                .andExpect(jsonPath("$[1].performer").value(musicList.get(1).getPerformer()));
     }
 
     // -------------------------------------------------------------------------
@@ -83,7 +93,7 @@ public class MusicControllerIntegrationTest extends AbstractIntegrationTest {
     @Test
     void should_return_music_filtered_by_performer() throws Exception {
         String performer = "Shirley Bassey";
-        List<Music> expected = musicRepository.findAllByPerformerIgnoreCase(performer);
+        List<Music> expected = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc(performer);
 
         getByPerformer(performer)
                 .andExpect(status().isOk())

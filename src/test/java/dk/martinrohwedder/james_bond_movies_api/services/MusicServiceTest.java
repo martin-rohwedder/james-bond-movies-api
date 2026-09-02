@@ -112,7 +112,7 @@ public class MusicServiceTest {
         MusicResponseDto dto1 = createMusicDto("Shirley Bassey");
         MusicResponseDto dto2 = createMusicDto("Chris Cornell");
 
-        when(musicRepository.findAll())
+        when(musicRepository.findAllByOrderByPerformerAsc())
                 .thenReturn(List.of(music1, music2));
 
         when(musicMapper.musicToMusicResponseDto(music1))
@@ -126,7 +126,7 @@ public class MusicServiceTest {
         // Assert
         assertThat(result).containsExactlyInAnyOrder(dto1, dto2);
 
-        verify(musicRepository).findAll();
+        verify(musicRepository).findAllByOrderByPerformerAsc();
         verify(musicMapper).musicToMusicResponseDto(music1);
         verify(musicMapper).musicToMusicResponseDto(music2);
         verifyNoMoreInteractions(musicRepository, musicMapper);
@@ -138,7 +138,7 @@ public class MusicServiceTest {
         Music music = createMusicEntity("Shirley Bassey");
         MusicResponseDto dto = createMusicDto("Shirley Bassey");
 
-        when(musicRepository.findAllByPerformerIgnoreCase("Shirley Bassey"))
+        when(musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("Shirley Bassey"))
                 .thenReturn(List.of(music));
 
         when(musicMapper.musicToMusicResponseDto(music))
@@ -150,7 +150,7 @@ public class MusicServiceTest {
         // Assert
         assertThat(result).containsExactlyInAnyOrder(dto);
 
-        verify(musicRepository).findAllByPerformerIgnoreCase("Shirley Bassey");
+        verify(musicRepository).findAllByPerformerIgnoreCaseOrderByPerformerAsc("Shirley Bassey");
         verify(musicMapper).musicToMusicResponseDto(music);
         verifyNoMoreInteractions(musicRepository, musicMapper);
     }
@@ -163,7 +163,7 @@ public class MusicServiceTest {
         Music music = createMusicEntity("Chris Cornell");
         MusicResponseDto dto = createMusicDto("Chris Cornell");
 
-        when(musicRepository.findAll())
+        when(musicRepository.findAllByOrderByPerformerAsc())
                 .thenReturn(List.of(music));
 
         when(musicMapper.musicToMusicResponseDto(music))
@@ -175,7 +175,7 @@ public class MusicServiceTest {
         // Assert
         assertThat(result).containsExactly(dto);
 
-        verify(musicRepository).findAll();
+        verify(musicRepository).findAllByOrderByPerformerAsc();
         verify(musicMapper).musicToMusicResponseDto(music);
         verifyNoMoreInteractions(musicRepository, musicMapper);
     }
@@ -183,7 +183,7 @@ public class MusicServiceTest {
     @Test
     void should_return_empty_list_when_no_matching_music_exists() {
         // Arrange
-        when(musicRepository.findAllByPerformerIgnoreCase("Unknown Performer"))
+        when(musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("Unknown Performer"))
                 .thenReturn(Collections.emptyList());
 
         // Act
@@ -192,14 +192,14 @@ public class MusicServiceTest {
         // Assert
         assertThat(result).isEmpty();
 
-        verify(musicRepository).findAllByPerformerIgnoreCase("Unknown Performer");
+        verify(musicRepository).findAllByPerformerIgnoreCaseOrderByPerformerAsc("Unknown Performer");
         verifyNoInteractions(musicMapper);
     }
 
     @Test
     void should_return_empty_list_when_no_music_exists() {
         // Arrange
-        when(musicRepository.findAll())
+        when(musicRepository.findAllByOrderByPerformerAsc())
                 .thenReturn(Collections.emptyList());
 
         // Act
@@ -208,7 +208,7 @@ public class MusicServiceTest {
         // Assert
         assertThat(result).isEmpty();
 
-        verify(musicRepository).findAll();
+        verify(musicRepository).findAllByOrderByPerformerAsc();
         verifyNoInteractions(musicMapper);
     }
 }

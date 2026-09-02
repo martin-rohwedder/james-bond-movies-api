@@ -7,5 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface MusicRepository extends JpaRepository<Music, UUID> {
-    List<Music> findAllByPerformerIgnoreCase(String performer);
+    List<Music> findAllByOrderByPerformerAsc();
+    List<Music> findAllByPerformerIgnoreCaseOrderByPerformerAsc(String performer);
 }
