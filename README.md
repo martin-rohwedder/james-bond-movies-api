@@ -195,6 +195,13 @@ An overview of all endpoints
 | GET        	| `/api/prodcuers/{id}` 	                 | Get a producer by id 	   |
 | GET        	| `/api/producers?name={producer_name}` 	 | Get a producer by name 	 |
 
+### Music
+
+| **Method** 	| **Endpoint**       	                      | **Description**   	      |
+|------------	|------------------------------------------|-------------------------|
+| GET        	| `/api/music`      	                       | List all music   	       |
+| GET        	| `/api/music?performer={performer_name}` 	 | Get music by performer 	 |
+
 ### Actuator Monitoring
 
 | **Method** 	| **Endpoint**       	                    | **Description**   	 |
