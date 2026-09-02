@@ -200,6 +200,7 @@ An overview of all endpoints
 | **Method** 	| **Endpoint**       	                      | **Description**   	      |
 |------------	|------------------------------------------|-------------------------|
 | GET        	| `/api/music`      	                       | List all music   	       |
+| GET        	| `/api/music/{id}`      	                  | Get music by id   	      |
 | GET        	| `/api/music?performer={performer_name}` 	 | Get music by performer 	 |
 
 ### Actuator Monitoring
