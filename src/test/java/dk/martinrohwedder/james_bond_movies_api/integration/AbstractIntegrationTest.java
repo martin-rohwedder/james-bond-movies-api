@@ -73,6 +73,11 @@ public abstract class AbstractIntegrationTest {
                 .header("X-API-Key", this.apiKey));
     }
 
+    protected ResultActions getByPerformer(String performer) throws Exception {
+        return mockMvc.perform(get(baseUrl()).param("performer", performer)
+                .header("X-API-Key", this.apiKey));
+    }
+
     // -------------------------------------------------------------------------
     // Request Logging Filter and Open API Config helper
     // -------------------------------------------------------------------------
