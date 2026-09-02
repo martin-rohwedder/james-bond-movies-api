@@ -5,12 +5,34 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MusicRepositoryTest extends AbstractRepositoryTest {
     @Autowired
     private MusicRepository musicRepository;
+
+    @Test
+    void should_return_music_by_id() {
+        Music expected = musicRepository.findAll().getFirst();
+
+        var result = musicRepository.findById(expected.getId());
+
+        assertThat(result)
+                .isPresent()
+                .get()
+                .extracting(Music::getId, Music::getPerformer)
+                .containsExactly(expected.getId(), expected.getPerformer());
+    }
+
+    @Test
+    void should_return_empty_optional_when_music_id_is_not_found() {
+        var result = musicRepository.findById(UUID.randomUUID());
+
+        assertThat(result).isEmpty();
+    }
 
     @Test
     void should_return_music_by_performer() {

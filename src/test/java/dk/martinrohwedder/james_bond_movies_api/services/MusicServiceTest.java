@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +51,52 @@ public class MusicServiceTest {
     @BeforeEach
     void setUp() {
         musicService = new MusicService(musicRepository, musicMapper);
+    }
+
+    // -------------------------------------------------------------------------
+    // getMusicById
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_music_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Music music = createMusicEntity("Chris Cornell");
+        MusicResponseDto dto = createMusicDto("Chris Cornell");
+
+        when(musicRepository.findById(id))
+                .thenReturn(Optional.of(music));
+
+        when(musicMapper.musicToMusicResponseDto(music))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MusicResponseDto> result = musicService.getMusicById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(musicRepository).findById(id);
+        verify(musicMapper).musicToMusicResponseDto(music);
+        verifyNoMoreInteractions(musicRepository, musicMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_music_is_not_found() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(musicRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MusicResponseDto> result = musicService.getMusicById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(musicRepository).findById(id);
+        verifyNoInteractions(musicMapper);
     }
 
     // -------------------------------------------------------------------------

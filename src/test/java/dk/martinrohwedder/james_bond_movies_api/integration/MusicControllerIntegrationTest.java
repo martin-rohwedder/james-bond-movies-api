@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.UUID;
 
-import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,6 +18,44 @@ public class MusicControllerIntegrationTest extends AbstractIntegrationTest {
     @Override
     protected String baseUrl() {
         return "/api/music";
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/music/{id}
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_music_by_id() throws Exception {
+        Music music = musicRepository.findAll().getFirst();
+
+        getById(music.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(music.getId().toString()))
+                .andExpect(jsonPath("$.title").value(music.getTitle()));
+    }
+
+    @Test
+    void should_return_complete_music_structure_by_id() throws Exception {
+        Music music = musicRepository.findAll().getFirst();
+
+        getById(music.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(music.getId().toString()))
+                .andExpect(jsonPath("$.title").value(music.getTitle()))
+                .andExpect(jsonPath("$.performer").value(music.getPerformer()))
+                .andExpect(jsonPath("$.song_url").value(music.getSongUrl()));
+    }
+
+    @Test
+    void should_return_status_not_found_when_music_id_is_unknown() throws Exception {
+        getById(UUID.randomUUID())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_when_music_id_is_invalid() throws Exception {
+        getById("not-a-uuid")
+                .andExpect(status().isBadRequest());
     }
 
     // -------------------------------------------------------------------------
