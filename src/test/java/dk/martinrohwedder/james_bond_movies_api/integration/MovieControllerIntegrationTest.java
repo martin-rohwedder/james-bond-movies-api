@@ -283,6 +283,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.release_dates[0].date_of_release").exists())
                 .andExpect(jsonPath("$.release_dates[0].country").exists())
                 .andExpect(jsonPath("$.release_dates[0].country_code").exists())
+                .andExpect(jsonPath("$.music.id").value(movie.getMusic().getId().toString()))
                 .andExpect(jsonPath("$.music.title").value(movie.getMusic().getTitle()))
                 .andExpect(jsonPath("$.music.performer").value(movie.getMusic().getPerformer()))
                 .andExpect(jsonPath("$.music.song_url").value(movie.getMusic().getSongUrl()))
