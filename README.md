@@ -81,7 +81,7 @@ services:
 
   jb_api:
     profiles: [ "deploy" ]
-    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.4.0
+    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.5.0
     restart: on-failure:3
     depends_on:
       mysql:
@@ -194,6 +194,14 @@ An overview of all endpoints
 | GET        	| `/api/producers`      	                 | List all producers   	   |
 | GET        	| `/api/prodcuers/{id}` 	                 | Get a producer by id 	   |
 | GET        	| `/api/producers?name={producer_name}` 	 | Get a producer by name 	 |
+
+### Music
+
+| **Method** 	| **Endpoint**       	                      | **Description**   	      |
+|------------	|------------------------------------------|-------------------------|
+| GET        	| `/api/music`      	                       | List all music   	       |
+| GET        	| `/api/music/{id}`      	                  | Get music by id   	      |
+| GET        	| `/api/music?performer={performer_name}` 	 | Get music by performer 	 |
 
 ### Actuator Monitoring
 

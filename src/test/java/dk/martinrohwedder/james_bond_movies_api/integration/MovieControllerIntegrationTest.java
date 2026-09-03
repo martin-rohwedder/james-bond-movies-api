@@ -230,7 +230,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_keep_director_music_box_office_parents_guide_and_technical_specifications_when_excluding_actors_and_producers_and_trivias() throws Exception {
+    void should_keep_director_music_box_office_parents_guide_genres_and_technical_specifications_when_excluding_actors_and_producers_and_trivias() throws Exception {
         getWithParams("excludeActors", "true", "excludeProducers", "true", "excludeTrivias", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].director.name").exists())
@@ -238,6 +238,8 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$[0].box_office.budget_usd").exists())
                 .andExpect(jsonPath("$[0].parents_guide.sex_and_nudity").exists())
                 .andExpect(jsonPath("$[0].technical_specifications.runtime_in_minutes").exists())
+                .andExpect(jsonPath("$[0].genres").isArray())
+                .andExpect(jsonPath("$[0].genres").isNotEmpty())
                 .andExpect(jsonPath("$[0].actors").isEmpty())
                 .andExpect(jsonPath("$[0].producers").isEmpty())
                 .andExpect(jsonPath("$[0].trivias").isEmpty());
@@ -283,10 +285,16 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.release_dates[0].date_of_release").exists())
                 .andExpect(jsonPath("$.release_dates[0].country").exists())
                 .andExpect(jsonPath("$.release_dates[0].country_code").exists())
+                .andExpect(jsonPath("$.music.id").value(movie.getMusic().getId().toString()))
                 .andExpect(jsonPath("$.music.title").value(movie.getMusic().getTitle()))
                 .andExpect(jsonPath("$.music.performer").value(movie.getMusic().getPerformer()))
                 .andExpect(jsonPath("$.music.song_url").value(movie.getMusic().getSongUrl()))
                 .andExpect(jsonPath("$.james_bond_actor").value(movie.getJamesBondActor()))
+                .andExpect(jsonPath("$.genres").isArray())
+                .andExpect(jsonPath("$.genres.length()").value(movie.getGenres().size()))
+                .andExpect(jsonPath("$.genres").isNotEmpty())
+                .andExpect(jsonPath("$.genres[0].title").value(movie.getGenres().getFirst().getTitle()))
+                .andExpect(jsonPath("$.genres[1].title").value(movie.getGenres().get(1).getTitle()))
                 .andExpect(jsonPath("$.director.name").value(movie.getDirector().getName()))
                 .andExpect(jsonPath("$.director.biography").value(movie.getDirector().getBiography()))
                 .andExpect(jsonPath("$.director.nationality").value(movie.getDirector().getNationality()))
@@ -309,6 +317,19 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.technical_specifications.printed_film_format").value(movie.getTechnicalSpecifications().getPrintedFilmFormat()))
                 .andExpect(jsonPath("$.created_at").isNotEmpty())
                 .andExpect(jsonPath("$.updated_at").isNotEmpty());
+    }
+
+    @Test
+    void should_return_genres_for_movie_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getById(movie.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.genres").isArray())
+                .andExpect(jsonPath("$.genres").isNotEmpty())
+                .andExpect(jsonPath("$.genres.length()").value(movie.getGenres().size()))
+                .andExpect(jsonPath("$.genres[0].title").value(movie.getGenres().getFirst().getTitle()))
+                .andExpect(jsonPath("$.genres[1].title").value(movie.getGenres().get(1).getTitle()));
     }
 
     @Test
@@ -460,7 +481,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_keep_director_music_box_office_parents_guide_and_technical_specifications_when_excluding_actors_and_producers_and_trivias_from_movie_by_id() throws Exception {
+    void should_keep_director_music_box_office_parents_guide_genres_and_technical_specifications_when_excluding_actors_and_producers_and_trivias_from_movie_by_id() throws Exception {
         Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
 
         getByIdWithParams(movie.getId(),"excludeActors", "true", "excludeProducers", "true", "excludeTrivias", "true")
@@ -470,6 +491,8 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.box_office.budget_usd").exists())
                 .andExpect(jsonPath("$.parents_guide.sex_and_nudity").exists())
                 .andExpect(jsonPath("$.technical_specifications.runtime_in_minutes").exists())
+                .andExpect(jsonPath("$.genres").isArray())
+                .andExpect(jsonPath("$.genres").isNotEmpty())
                 .andExpect(jsonPath("$.actors").isEmpty())
                 .andExpect(jsonPath("$.producers").isEmpty())
                 .andExpect(jsonPath("$.trivias").isEmpty());
