@@ -17,6 +17,7 @@ public record MovieResponseDto(
         List<ReleaseDateResponseDto> releaseDates,
         MusicResponseDto music,
         String jamesBondActor,
+        List<GenreResponseDto> genres,
         DirectorResponseDto director,
         List<ProducerResponseDto> producers,
         String locations,
