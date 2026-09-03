@@ -43,11 +43,7 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
 
         assertThat(performers)
                 .isNotEmpty()
-                .startsWith(
-                        "A-ha",
-                        "Adele",
-                        "Billie Eilish"
-                );
+                .isSorted();
     }
 
     @Test
@@ -55,10 +51,9 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
         List<Music> result = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("Shirley Bassey");
 
         assertThat(result)
+                .isNotEmpty()
                 .extracting(Music::getPerformer)
-                .containsExactlyElementsOf(
-                        result.stream().map(Music::getPerformer).toList()
-                );
+                .containsOnly("Shirley Bassey");
     }
 
     @Test
@@ -66,10 +61,9 @@ public class MusicRepositoryTest extends AbstractRepositoryTest {
         List<Music> result = musicRepository.findAllByPerformerIgnoreCaseOrderByPerformerAsc("ShIrLey BASSey");
 
         assertThat(result)
+                .isNotEmpty()
                 .extracting(Music::getPerformer)
-                .containsExactlyElementsOf(
-                        result.stream().map(Music::getPerformer).toList()
-                );
+                .containsOnly("Shirley Bassey");
     }
 
     @Test
