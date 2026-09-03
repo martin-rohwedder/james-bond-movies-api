@@ -211,4 +211,4 @@ An overview of all endpoints
 
 ---
 
-&copy; 2026 Martin Rohwedder
+&copy; 2026 [Martin Rohwedder](https://www.martinrohwedder.dk/)
