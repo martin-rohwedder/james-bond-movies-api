@@ -22,6 +22,7 @@ public record MovieResponseDto(
         List<ProducerResponseDto> producers,
         String locations,
         List<ActorResponseDto> actors,
+        List<WriterResponseDto> writers,
         List<TriviaResponseDto> trivias,
         BoxOfficeResponseDto boxOffice,
         TechnicalSpecificationsResponseDto technicalSpecifications,

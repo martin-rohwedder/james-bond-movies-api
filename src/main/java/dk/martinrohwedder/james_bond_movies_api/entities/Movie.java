@@ -91,6 +91,15 @@ public class Movie {
     private List<Actor> actors = new ArrayList<>();
 
     @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "movies_writers",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "writer_id")
+    )
+    private List<Writer> writers = new ArrayList<>();
+
+    @Builder.Default
     @OneToMany(
             mappedBy = "movie",
             fetch =  FetchType.EAGER,
@@ -140,6 +149,15 @@ public class Movie {
     public void addActor(Actor actor) {
         actors.add(actor);
         actor.getMovies().add(this);
+    }
+
+    /****************************************************************************************************
+     /* Convenience method for adding bidirectional relationship between movie and writer entities.
+     ****************************************************************************************************/
+
+    public void addWriter(Writer writer) {
+        writers.add(writer);
+        writer.getMovies().add(this);
     }
 
     /***************************************************************************************************************

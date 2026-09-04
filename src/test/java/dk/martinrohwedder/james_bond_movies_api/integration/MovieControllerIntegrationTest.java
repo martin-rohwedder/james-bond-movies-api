@@ -230,7 +230,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_keep_director_music_box_office_parents_guide_genres_and_technical_specifications_when_excluding_actors_and_producers_and_trivias() throws Exception {
+    void should_keep_director_music_box_office_parents_guide_writers_genres_and_technical_specifications_when_excluding_actors_and_producers_and_trivias() throws Exception {
         getWithParams("excludeActors", "true", "excludeProducers", "true", "excludeTrivias", "true")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].director.name").exists())
@@ -238,6 +238,8 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$[0].box_office.budget_usd").exists())
                 .andExpect(jsonPath("$[0].parents_guide.sex_and_nudity").exists())
                 .andExpect(jsonPath("$[0].technical_specifications.runtime_in_minutes").exists())
+                .andExpect(jsonPath("$[0].writers").isArray())
+                .andExpect(jsonPath("$[0].writers").isNotEmpty())
                 .andExpect(jsonPath("$[0].genres").isArray())
                 .andExpect(jsonPath("$[0].genres").isNotEmpty())
                 .andExpect(jsonPath("$[0].actors").isEmpty())
@@ -305,6 +307,9 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.locations").value(movie.getLocations()))
                 .andExpect(jsonPath("$.actors").isArray())
                 .andExpect(jsonPath("$.actors.length()").value(movie.getActors().size()))
+                .andExpect(jsonPath("$.writers").isArray())
+                .andExpect(jsonPath("$.writers.length()").value(movie.getWriters().size()))
+                .andExpect(jsonPath("$.writers[0].name").value(movie.getWriters().getFirst().getName()))
                 .andExpect(jsonPath("$.trivias").isArray())
                 .andExpect(jsonPath("$.trivias.length()").value(movie.getTrivias().size()))
                 .andExpect(jsonPath("$.trivias[0].content").value(movie.getTrivias().getFirst().getContent()))
@@ -330,6 +335,19 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.genres.length()").value(movie.getGenres().size()))
                 .andExpect(jsonPath("$.genres[0].title").value(movie.getGenres().getFirst().getTitle()))
                 .andExpect(jsonPath("$.genres[1].title").value(movie.getGenres().get(1).getTitle()));
+    }
+
+    @Test
+    void should_return_writers_for_movie_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getById(movie.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.writers").isArray())
+                .andExpect(jsonPath("$.writers").isNotEmpty())
+                .andExpect(jsonPath("$.writers.length()").value(movie.getWriters().size()))
+                .andExpect(jsonPath("$.writers[0].name").value(movie.getWriters().getFirst().getName()))
+                .andExpect(jsonPath("$.writers[1].name").value(movie.getWriters().get(1).getName()));
     }
 
     @Test
@@ -481,7 +499,7 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_keep_director_music_box_office_parents_guide_genres_and_technical_specifications_when_excluding_actors_and_producers_and_trivias_from_movie_by_id() throws Exception {
+    void should_keep_director_music_box_office_parents_guide_writers_genres_and_technical_specifications_when_excluding_actors_and_producers_and_trivias_from_movie_by_id() throws Exception {
         Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
 
         getByIdWithParams(movie.getId(),"excludeActors", "true", "excludeProducers", "true", "excludeTrivias", "true")
@@ -491,6 +509,8 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.box_office.budget_usd").exists())
                 .andExpect(jsonPath("$.parents_guide.sex_and_nudity").exists())
                 .andExpect(jsonPath("$.technical_specifications.runtime_in_minutes").exists())
+                .andExpect(jsonPath("$.writers").isArray())
+                .andExpect(jsonPath("$.writers").isNotEmpty())
                 .andExpect(jsonPath("$.genres").isArray())
                 .andExpect(jsonPath("$.genres").isNotEmpty())
                 .andExpect(jsonPath("$.actors").isEmpty())
