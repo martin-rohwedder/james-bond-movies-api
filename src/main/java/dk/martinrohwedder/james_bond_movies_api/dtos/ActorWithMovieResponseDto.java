@@ -12,5 +12,5 @@ public record ActorWithMovieResponseDto(
         String nationality,
         LocalDate dateOfBirth,
         LocalDate dateOfDeath,
-        List<MovieForSpecificActorResponseDto> movies
+        List<MinimalMovieResponseDto> movies
 ) {}

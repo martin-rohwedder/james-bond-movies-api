@@ -9,5 +9,5 @@ public record WriterWithMovieResponseDto(
         String name,
         LocalDate dateOfBirth,
         LocalDate dateOfDeath,
-        List<MovieForSpecificWriterResponseDto> movies
+        List<MinimalMovieResponseDto> movies
 ) {}
