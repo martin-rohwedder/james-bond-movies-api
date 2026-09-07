@@ -21,13 +21,15 @@ public class DirectorService {
     /**
      * Get all directors
      */
-    public List<DirectorWithMoviesResponseDto> getAllDirectors(String name) {
+    public List<DirectorWithMoviesResponseDto> getAllDirectors(String name, boolean includeMovies) {
+        log.debug("Getting all directors with name: {} and includeMovies: {}", name, includeMovies);
+
         var directors = (name == null || name.isBlank())
                 ? directorRepository.findAllByOrderByNameAsc()
                 : directorRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
 
         return directors.stream()
-                .map(directorMapper::directorToDirectorWithMoviesResponseDto)
+                .map(director -> directorMapper.directorToDirectorWithMoviesResponseDto(director, includeMovies))
                 .toList();
     }
 
