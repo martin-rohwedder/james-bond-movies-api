@@ -81,7 +81,7 @@ services:
 
   jb_api:
     profiles: [ "deploy" ]
-    image: ghcr.io/martin-rohwedder/james-bond-movies-api:1.5.0
+    image: ghcr.io/martin-rohwedder/james-bond-movies-api:latest
     restart: on-failure:3
     depends_on:
       mysql:
@@ -177,7 +177,7 @@ An overview of all endpoints
 | GET        	| `/api/actors`      	                                        | List all actors   	                     |
 | GET        	| `/api/actors/{id}` 	                                        | Get an actor by id 	                    |
 | GET        	| `/api/actors?name={actor_name}`	                            | Get an actor by name	                   |
-| GET        	| `/api/actors?name={actor_name}&includeMovies={true/false}`	 | Get an actor by name	and include movies |
+| GET        	| `/api/actors?name={actor_name}&includeMovies={true/false}`	 | Get an actor by name	and include/exclude movies |
 
 ### Directors
 
@@ -186,6 +186,7 @@ An overview of all endpoints
 | GET        	| `/api/directors`      	                 | List all directors   	   |
 | GET        	| `/api/directors/{id}` 	                 | Get a director by id 	   |
 | GET        	| `/api/directors?name={director_name}` 	 | Get a director by name 	 |
+| GET        	| `/api/directors?name={director_name}&includeMovies={true/false}` 	 | Get a director by name and include/exclude movies 	 |
 
 ### Producers
 
@@ -194,6 +195,16 @@ An overview of all endpoints
 | GET        	| `/api/producers`      	                 | List all producers   	   |
 | GET        	| `/api/prodcuers/{id}` 	                 | Get a producer by id 	   |
 | GET        	| `/api/producers?name={producer_name}` 	 | Get a producer by name 	 |
+| GET        	| `/api/producers?name={producer_name}&includeMovies={true/false}` 	 | Get a producer by name and include/exclude movies 	 |
+
+### Writers
+
+| **Method** 	| **Endpoint**       	                    | **Description**   	      |
+|------------	|----------------------------------------|-------------------------|
+| GET        	| `/api/writers`      	                 | List all writers   	   |
+| GET        	| `/api/writers/{id}` 	                 | Get a writer by id 	   |
+| GET        	| `/api/writers?name={writer_name}` 	 | Get a writer by name 	 |
+| GET        	| `/api/writers?name={writer_name}&includeMovies={true/false}` 	 | Get a writer by name and include/exclude movies 	 |
 
 ### Music
 
