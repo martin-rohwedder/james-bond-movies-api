@@ -20,12 +20,14 @@ public class ProducerController {
 
     // GET: /api/producers
     // GET: /api/producers?name={producer_name}
+    // GET: /api/producers?name={producer_name&includeMovies={true/false}
     @Operation(summary = "Get all producers. Filter by name")
     @GetMapping
     public ResponseEntity<List<ProducerWithMoviesResponseDto>> getAllProducers(
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "true") boolean includeMovies
     ) {
-        return ResponseEntity.ok(producerService.getAllProducers(name));
+        return ResponseEntity.ok(producerService.getAllProducers(name, includeMovies));
     }
 
     // GET: /api/producers/{id}
