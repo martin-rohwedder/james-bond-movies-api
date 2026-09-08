@@ -47,7 +47,8 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.biography").value(director.getBiography()))
                 .andExpect(jsonPath("$.nationality").value(director.getNationality()))
                 .andExpect(jsonPath("$.date_of_birth").value(director.getDateOfBirth().toString()))
-                .andExpect(jsonPath("$.movies").isArray());
+                .andExpect(jsonPath("$.movies").isArray())
+                .andExpect(jsonPath("$.movies").isNotEmpty());
 
         if (director.getDateOfDeath() != null) {
             result.andExpect(jsonPath("$.date_of_death")
@@ -55,6 +56,19 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
         } else {
             result.andExpect(jsonPath("$.date_of_death").value(nullValue()));
         }
+    }
+
+    @Test
+    void should_return_movies_with_expected_structure_by_id() throws Exception {
+        Director director = directorRepository.findAllByOrderByNameAsc().getFirst();
+
+        getById(director.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.movies").isArray())
+                .andExpect(jsonPath("$.movies").isNotEmpty())
+                .andExpect(jsonPath("$.movies[0].id").exists())
+                .andExpect(jsonPath("$.movies[0].title").exists())
+                .andExpect(jsonPath("$.movies[0].movie_number").exists());
     }
 
     @Test
@@ -86,11 +100,27 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_include_movies_for_each_director() throws Exception {
+    void should_include_movies_for_each_director_by_default() throws Exception {
         getAll()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].movies").isArray())
-                .andExpect(jsonPath("$[0].movies.length()").isNotEmpty());
+                .andExpect(jsonPath("$[0].movies").isNotEmpty());
+    }
+
+    @Test
+    void should_return_same_result_when_include_movies_is_true() throws Exception {
+        getWithParams("include_movies", "true")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].movies").isArray())
+                .andExpect(jsonPath("$[0].movies").isNotEmpty());
+    }
+
+    @Test
+    void should_exclude_movies_when_include_movies_is_false() throws Exception {
+        getWithParams("includeMovies", "false")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].movies").isArray())
+                .andExpect(jsonPath("$[0].movies").isEmpty());
     }
 
     @Test
@@ -147,5 +177,13 @@ class DirectorControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$[0].movies[0].movie_number").value(1))
                 .andExpect(jsonPath("$[0].movies[1].movie_number").value(2))
                 .andExpect(jsonPath("$[0].movies[2].movie_number").value(4));
+    }
+
+    @Test
+    void should_return_directors_by_name_without_movies() throws Exception {
+        getWithParams("name", "Terence Young", "includeMovies", "false")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Terence Young"))
+                .andExpect(jsonPath("$[0].movies.length()").value(0));
     }
 }

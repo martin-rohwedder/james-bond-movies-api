@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,7 +92,7 @@ class ProducerServiceTest {
     }
 
     @Test
-    void should_return_all_producers() {
+    void should_return_all_producers_with_movies() {
         Producer producer1 = createProducerEntity("Albert R. Broccoli");
         Producer producer2 = createProducerEntity("Harry Saltzman");
 
@@ -103,41 +102,86 @@ class ProducerServiceTest {
         when(producerRepository.findAllByOrderByNameAsc())
                 .thenReturn(List.of(producer1, producer2));
 
-        when(producerMapper.producerToProducerWithMoviesResponseDto(producer1))
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer1, true))
                 .thenReturn(dto1);
-        when(producerMapper.producerToProducerWithMoviesResponseDto(producer2))
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer2, true))
                 .thenReturn(dto2);
 
         List<ProducerWithMoviesResponseDto> result =
-                producerService.getAllProducers(null);
+                producerService.getAllProducers(null, true);
 
         assertThat(result).containsExactly(dto1, dto2);
 
         verify(producerRepository).findAllByOrderByNameAsc();
-        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer1);
-        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer2);
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer1, true);
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer2, true);
         verifyNoMoreInteractions(producerRepository, producerMapper);
     }
 
     @Test
-    void should_return_producers_by_name() {
+    void should_return_all_producers_without_movies() {
+        Producer producer1 = createProducerEntity("Albert R. Broccoli");
+        Producer producer2 = createProducerEntity("Harry Saltzman");
+
+        ProducerWithMoviesResponseDto dto1 = createProducerDto("Albert R. Broccoli");
+        ProducerWithMoviesResponseDto dto2 = createProducerDto("Harry Saltzman");
+
+        when(producerRepository.findAllByOrderByNameAsc())
+                .thenReturn(List.of(producer1, producer2));
+
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer1, false))
+                .thenReturn(dto1);
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer2, false))
+                .thenReturn(dto2);
+
+        List<ProducerWithMoviesResponseDto> result =
+                producerService.getAllProducers(null, false);
+
+        assertThat(result).containsExactly(dto1, dto2);
+
+        verify(producerRepository).findAllByOrderByNameAsc();
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer1, false);
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer2, false);
+        verifyNoMoreInteractions(producerRepository, producerMapper);
+    }
+
+    @Test
+    void should_return_producers_by_name_with_movies() {
         Producer producer = createProducerEntity("Albert R. Broccoli");
         ProducerWithMoviesResponseDto dto = createProducerDto("Albert R. Broccoli");
 
         when(producerRepository.findAllByNameIgnoreCaseOrderByNameAsc("Albert R. Broccoli"))
                 .thenReturn(List.of(producer));
 
-        when(producerMapper.producerToProducerWithMoviesResponseDto(producer))
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer, true))
                 .thenReturn(dto);
 
-        List<ProducerWithMoviesResponseDto> result =
-                producerService.getAllProducers("Albert R. Broccoli");
+        List<ProducerWithMoviesResponseDto> result = producerService.getAllProducers("Albert R. Broccoli", true);
 
         assertThat(result).containsExactly(dto);
 
-        verify(producerRepository)
-                .findAllByNameIgnoreCaseOrderByNameAsc("Albert R. Broccoli");
-        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer);
+        verify(producerRepository).findAllByNameIgnoreCaseOrderByNameAsc("Albert R. Broccoli");
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer, true);
+        verifyNoMoreInteractions(producerRepository, producerMapper);
+    }
+
+    @Test
+    void should_return_producers_by_name_without_movies() {
+        Producer producer = createProducerEntity("Albert R. Broccoli");
+        ProducerWithMoviesResponseDto dto = createProducerDto("Albert R. Broccoli");
+
+        when(producerRepository.findAllByNameIgnoreCaseOrderByNameAsc("Albert R. Broccoli"))
+                .thenReturn(List.of(producer));
+
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer, false))
+                .thenReturn(dto);
+
+        List<ProducerWithMoviesResponseDto> result = producerService.getAllProducers("Albert R. Broccoli", false);
+
+        assertThat(result).containsExactly(dto);
+
+        verify(producerRepository).findAllByNameIgnoreCaseOrderByNameAsc("Albert R. Broccoli");
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer, false);
         verifyNoMoreInteractions(producerRepository, producerMapper);
     }
 
@@ -151,41 +195,37 @@ class ProducerServiceTest {
         when(producerRepository.findAllByOrderByNameAsc())
                 .thenReturn(List.of(producer));
 
-        when(producerMapper.producerToProducerWithMoviesResponseDto(producer))
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer, true))
                 .thenReturn(dto);
 
-        List<ProducerWithMoviesResponseDto> result =
-                producerService.getAllProducers(name);
+        List<ProducerWithMoviesResponseDto> result = producerService.getAllProducers(name, true);
 
         assertThat(result).containsExactly(dto);
 
         verify(producerRepository).findAllByOrderByNameAsc();
-        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer);
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer, true);
         verifyNoMoreInteractions(producerRepository, producerMapper);
     }
 
     @Test
     void should_return_empty_list_when_no_matching_producer_exists() {
         when(producerRepository.findAllByNameIgnoreCaseOrderByNameAsc("Unknown Producer"))
-                .thenReturn(Collections.emptyList());
+                .thenReturn(List.of());
 
-        List<ProducerWithMoviesResponseDto> result =
-                producerService.getAllProducers("Unknown Producer");
+        List<ProducerWithMoviesResponseDto> result = producerService.getAllProducers("Unknown Producer", true);
 
         assertThat(result).isEmpty();
 
-        verify(producerRepository)
-                .findAllByNameIgnoreCaseOrderByNameAsc("Unknown Producer");
+        verify(producerRepository).findAllByNameIgnoreCaseOrderByNameAsc("Unknown Producer");
         verifyNoInteractions(producerMapper);
     }
 
     @Test
     void should_return_empty_list_when_no_producers_exist() {
         when(producerRepository.findAllByOrderByNameAsc())
-                .thenReturn(Collections.emptyList());
+                .thenReturn(List.of());
 
-        List<ProducerWithMoviesResponseDto> result =
-                producerService.getAllProducers(null);
+        List<ProducerWithMoviesResponseDto> result = producerService.getAllProducers(null, true);
 
         assertThat(result).isEmpty();
 

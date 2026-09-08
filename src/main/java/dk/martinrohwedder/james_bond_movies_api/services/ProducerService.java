@@ -21,13 +21,15 @@ public class ProducerService {
     /**
      * Get all producers by name
      */
-    public List<ProducerWithMoviesResponseDto> getAllProducers(String name) {
+    public List<ProducerWithMoviesResponseDto> getAllProducers(String name, boolean includeMovies) {
+        log.debug("Getting all producers with name: {} and includeMovies: {}", name, includeMovies);
+
         var producers = (name == null || name.isBlank())
                 ? producerRepository.findAllByOrderByNameAsc()
                 : producerRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
 
         return producers.stream()
-                .map(producerMapper::producerToProducerWithMoviesResponseDto)
+                .map(producer -> producerMapper.producerToProducerWithMoviesResponseDto(producer, includeMovies))
                 .toList();
     }
 

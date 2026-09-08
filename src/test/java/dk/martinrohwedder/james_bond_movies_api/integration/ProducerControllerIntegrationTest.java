@@ -47,7 +47,8 @@ class ProducerControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.biography").value(producer.getBiography()))
                 .andExpect(jsonPath("$.nationality").value(producer.getNationality()))
                 .andExpect(jsonPath("$.date_of_birth").value(producer.getDateOfBirth().toString()))
-                .andExpect(jsonPath("$.movies").isArray());
+                .andExpect(jsonPath("$.movies").isArray())
+                .andExpect(jsonPath("$.movies").isNotEmpty());
 
         if (producer.getDateOfDeath() != null) {
             result.andExpect(jsonPath("$.date_of_death")
@@ -55,6 +56,19 @@ class ProducerControllerIntegrationTest extends AbstractIntegrationTest {
         } else {
             result.andExpect(jsonPath("$.date_of_death").value(nullValue()));
         }
+    }
+
+    @Test
+    void should_return_movies_with_expected_structure_by_id() throws Exception {
+        Producer producer = producerRepository.findAllByOrderByNameAsc().getFirst();
+
+        getById(producer.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.movies").isArray())
+                .andExpect(jsonPath("$.movies").isNotEmpty())
+                .andExpect(jsonPath("$.movies[0].id").exists())
+                .andExpect(jsonPath("$.movies[0].title").exists())
+                .andExpect(jsonPath("$.movies[0].movie_number").exists());
     }
 
     @Test
@@ -86,11 +100,27 @@ class ProducerControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void should_include_movies_for_each_producer() throws Exception {
+    void should_include_movies_for_each_producer_by_default() throws Exception {
         getAll()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].movies").isArray())
                 .andExpect(jsonPath("$[0].movies.length()").isNotEmpty());
+    }
+
+    @Test
+    void should_return_same_result_when_include_movies_is_true() throws Exception {
+        getWithParams("include_movies", "true")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].movies").isArray())
+                .andExpect(jsonPath("$[0].movies").isNotEmpty());
+    }
+
+    @Test
+    void should_exclude_movies_when_include_movies_is_false() throws Exception {
+        getWithParams("includeMovies", "false")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].movies").isArray())
+                .andExpect(jsonPath("$[0].movies").isEmpty());
     }
 
     @Test
@@ -108,10 +138,9 @@ class ProducerControllerIntegrationTest extends AbstractIntegrationTest {
     // -------------------------------------------------------------------------
 
     @Test
-    void should_return_producers_by_name() throws Exception {
+    void should_return_producers_filtered_by_name() throws Exception {
         String name = "Albert R. Broccoli";
-        List<Producer> expected =
-                producerRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
+        List<Producer> expected = producerRepository.findAllByNameIgnoreCaseOrderByNameAsc(name);
 
         getByName(name)
                 .andExpect(status().isOk())

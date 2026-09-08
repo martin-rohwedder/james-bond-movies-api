@@ -20,12 +20,14 @@ public class DirectorController {
 
     // GET: /api/directors
     // GET: /api/directors?name={director_name}
+    // GET: /api/directors?name={director_name}&includeMovies={true/false}
     @Operation(summary = "Get all directors. Filter by name")
     @GetMapping
     public ResponseEntity<List<DirectorWithMoviesResponseDto>> getAllDirectors(
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "true") boolean includeMovies
     ) {
-        return ResponseEntity.ok(directorService.getAllDirectors(name));
+        return ResponseEntity.ok(directorService.getAllDirectors(name, includeMovies));
     }
 
     // GET: /api/directors/{id}
