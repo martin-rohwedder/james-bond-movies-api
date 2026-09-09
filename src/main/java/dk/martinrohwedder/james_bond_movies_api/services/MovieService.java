@@ -1,6 +1,7 @@
 package dk.martinrohwedder.james_bond_movies_api.services;
 
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithActorsResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
@@ -57,5 +58,15 @@ public class MovieService {
 
         return movieRepository.findById(id)
                 .map(movieMapper::movieToMovieWithTriviaResponseDto);
+    }
+
+    /**
+     * Get a specific movie by id, with only actors
+     */
+    public Optional<MovieWithActorsResponseDto> getMovieWithActorsById(UUID id) {
+        log.debug("Fetching movie with id {}", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithActorsResponseDto);
     }
 }

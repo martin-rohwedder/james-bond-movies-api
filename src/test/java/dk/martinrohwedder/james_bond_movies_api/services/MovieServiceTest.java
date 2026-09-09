@@ -1,6 +1,7 @@
 package dk.martinrohwedder.james_bond_movies_api.services;
 
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithActorsResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
@@ -329,7 +330,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void should_return_movie_with_trivia_by_id() {
+    void should_return_movie_with_trivias_by_id() {
         // Arrange
         UUID id = UUID.randomUUID();
         Movie movie = createMovieEntity();
@@ -353,7 +354,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void should_return_empty_optional_when_movie_with_trivia_is_not_found_by_id() {
+    void should_return_empty_optional_when_movie_with_trivias_is_not_found_by_id() {
         // Arrange
         UUID id = UUID.randomUUID();
 
@@ -362,6 +363,48 @@ class MovieServiceTest {
 
         // Act
         Optional<MovieWithTriviaResponseDto> result = movieService.getMovieWithTriviaById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
+
+    @Test
+    void should_return_movie_with_actors_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithActorsResponseDto dto = mock(MovieWithActorsResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithActorsResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithActorsResponseDto> result = movieService.getMovieWithActorsById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithActorsResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_actors_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithActorsResponseDto> result = movieService.getMovieWithActorsById(id);
 
         // Assert
         assertThat(result).isEmpty();
