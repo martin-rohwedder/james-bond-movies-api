@@ -2,6 +2,7 @@ package dk.martinrohwedder.james_bond_movies_api.services;
 
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithActorsResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithDirectorsResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
@@ -54,7 +55,7 @@ public class MovieService {
      * Get a specific movie by id, with only trivia
      */
     public Optional<MovieWithTriviaResponseDto> getMovieWithTriviaById(UUID id) {
-        log.debug("Fetching movie with id {}", id);
+        log.debug("Fetching movie with id {} with only trivias", id);
 
         return movieRepository.findById(id)
                 .map(movieMapper::movieToMovieWithTriviaResponseDto);
@@ -64,9 +65,19 @@ public class MovieService {
      * Get a specific movie by id, with only actors
      */
     public Optional<MovieWithActorsResponseDto> getMovieWithActorsById(UUID id) {
-        log.debug("Fetching movie with id {}", id);
+        log.debug("Fetching movie with id {} with only actors", id);
 
         return movieRepository.findById(id)
                 .map(movieMapper::movieToMovieWithActorsResponseDto);
+    }
+
+    /**
+     * Get a specific movie by id, with only directors
+     */
+    public Optional<MovieWithDirectorsResponseDto> getMovieWithDirectorById(UUID id) {
+        log.debug("Fetching movie with id {} with only directors", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithDirectorsResponseDto);
     }
 }

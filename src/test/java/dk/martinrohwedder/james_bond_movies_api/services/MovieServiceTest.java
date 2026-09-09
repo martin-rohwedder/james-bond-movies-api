@@ -2,6 +2,7 @@ package dk.martinrohwedder.james_bond_movies_api.services;
 
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithActorsResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithDirectorsResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
@@ -405,6 +406,48 @@ class MovieServiceTest {
 
         // Act
         Optional<MovieWithActorsResponseDto> result = movieService.getMovieWithActorsById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
+
+    @Test
+    void should_return_movie_with_director_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithDirectorsResponseDto dto = mock(MovieWithDirectorsResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithDirectorsResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithDirectorsResponseDto> result = movieService.getMovieWithDirectorById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithDirectorsResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_director_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithDirectorsResponseDto> result = movieService.getMovieWithDirectorById(id);
 
         // Assert
         assertThat(result).isEmpty();
