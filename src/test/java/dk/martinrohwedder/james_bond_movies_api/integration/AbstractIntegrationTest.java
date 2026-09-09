@@ -53,6 +53,11 @@ public abstract class AbstractIntegrationTest {
                 .header("X-API-Key", this.apiKey));
     }
 
+    protected ResultActions getByIdWithTrailingPath(UUID id, String trailingPath) throws Exception {
+        return mockMvc.perform(get(baseUrl() + "/{id}/{trailingPath}", id, trailingPath)
+                .header("X-API-Key", this.apiKey));
+    }
+
     protected ResultActions getByIdWithParams(UUID id, String... params) throws Exception {
         var request = get(baseUrl() + "/{id}", id).header("X-API-Key", this.apiKey);
 
@@ -65,6 +70,11 @@ public abstract class AbstractIntegrationTest {
 
     protected ResultActions getById(String id) throws Exception {
         return mockMvc.perform(get(baseUrl() + "/{id}", id)
+                .header("X-API-Key", this.apiKey));
+    }
+
+    protected ResultActions getByIdWithTrailingPath(String id, String trailingPath) throws Exception {
+        return mockMvc.perform(get(baseUrl() + "/{id}/{trailingPath}", id, trailingPath)
                 .header("X-API-Key", this.apiKey));
     }
 

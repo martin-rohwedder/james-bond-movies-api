@@ -1,6 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.services;
 
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.*;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import lombok.AllArgsConstructor;
@@ -46,5 +46,55 @@ public class MovieService {
                         excludeProducers,
                         excludeTrivias
                 ));
+    }
+
+    /**
+     * Get a specific movie by id, with only trivia
+     */
+    public Optional<MovieWithTriviaResponseDto> getMovieWithTriviaById(UUID id) {
+        log.debug("Fetching movie with id {} with only trivias", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithTriviaResponseDto);
+    }
+
+    /**
+     * Get a specific movie by id, with only actors
+     */
+    public Optional<MovieWithActorsResponseDto> getMovieWithActorsById(UUID id) {
+        log.debug("Fetching movie with id {} with only actors", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithActorsResponseDto);
+    }
+
+    /**
+     * Get a specific movie by id, with only directors
+     */
+    public Optional<MovieWithDirectorResponseDto> getMovieWithDirectorById(UUID id) {
+        log.debug("Fetching movie with id {} with only directors", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithDirectorResponseDto);
+    }
+
+    /**
+     * Get a specific movie by id, with only producers
+     */
+    public Optional<MovieWithProducersResponseDto> getMovieWithProducersById(UUID id) {
+        log.debug("Fetching movie with id {} with only producers", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithProducersResponseDto);
+    }
+
+    /**
+     * Get a specific movie by id, with only writers
+     */
+    public Optional<MovieWithWritersResponseDto> getMovieWithWritersById(UUID id) {
+        log.debug("Fetching movie with id {} with only writers", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithWritersResponseDto);
     }
 }

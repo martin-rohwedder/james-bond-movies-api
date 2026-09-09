@@ -4,7 +4,11 @@ import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.UUID;
+
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -535,6 +539,166 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
         Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
 
         getByIdWithParams(movie.getId(), "excludeActors", "invalid")
+                .andExpect(status().isBadRequest());
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/movies/{id}/trivias
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_movie_with_trivias_when_getting_movie_with_trivias_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getByIdWithTrailingPath(movie.getId(), "trivias")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(movie.getId().toString()))
+                .andExpect(jsonPath("$.movie_number").value(movie.getMovieNumber()))
+                .andExpect(jsonPath("$.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.trivias").isArray())
+                .andExpect(jsonPath("$.trivias").isNotEmpty())
+                .andExpect(jsonPath("$.trivias.length()").value(movie.getTrivias().size()));
+    }
+
+    @Test
+    void should_return_status_not_found_for_wrong_id_when_getting_movie_with_trivias_by_id() throws Exception {
+        getByIdWithTrailingPath(UUID.fromString("41e7c4a8-ad00-4137-9c83-55edd8c58fe7"), "trivias")
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_for_invalid_uuid_when_getting_movie_with_trivias_by_id() throws Exception {
+        getByIdWithTrailingPath("not-a-uuid", "trivias")
+                .andExpect(status().isBadRequest());
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/movies/{id}/actors
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_movie_with_actors_when_getting_movie_with_actors_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getByIdWithTrailingPath(movie.getId(), "actors")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(movie.getId().toString()))
+                .andExpect(jsonPath("$.movie_number").value(movie.getMovieNumber()))
+                .andExpect(jsonPath("$.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.actors").isArray())
+                .andExpect(jsonPath("$.actors").isNotEmpty())
+                .andExpect(jsonPath("$.actors.length()").value(movie.getActors().size()));
+    }
+
+    @Test
+    void should_return_status_not_found_for_wrong_id_when_getting_movie_with_actors_by_id() throws Exception {
+        getByIdWithTrailingPath(UUID.fromString("41e7c4a8-ad00-4137-9c83-55edd8c58fe7"), "actors")
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_for_invalid_uuid_when_getting_movie_with_actors_by_id() throws Exception {
+        getByIdWithTrailingPath("not-a-uuid", "actors")
+                .andExpect(status().isBadRequest());
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/movies/{id}/director
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_movie_with_director_when_getting_movie_with_director_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        ResultActions result = getByIdWithTrailingPath(movie.getId(), "director")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(movie.getId().toString()))
+                .andExpect(jsonPath("$.movie_number").value(movie.getMovieNumber()))
+                .andExpect(jsonPath("$.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.director").isNotEmpty())
+                .andExpect(jsonPath("$.director.id").value(movie.getDirector().getId().toString()))
+                .andExpect(jsonPath("$.director.name").value(movie.getDirector().getName()))
+                .andExpect(jsonPath("$.director.biography").value(movie.getDirector().getBiography()))
+                .andExpect(jsonPath("$.director.nationality").value(movie.getDirector().getNationality()))
+                .andExpect(jsonPath("$.director.date_of_birth").value(movie.getDirector().getDateOfBirth().toString()));
+
+        if (movie.getDirector().getDateOfDeath() != null) {
+            result.andExpect(jsonPath("$.director.date_of_death").value(movie.getDirector().getDateOfDeath().toString()));
+        }
+        else {
+            result.andExpect(jsonPath("$.director.date_of_death").value(nullValue()));
+        }
+    }
+
+    @Test
+    void should_return_status_not_found_for_wrong_id_when_getting_movie_with_director_by_id() throws Exception {
+        getByIdWithTrailingPath(UUID.fromString("41e7c4a8-ad00-4137-9c83-55edd8c58fe7"), "director")
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_for_invalid_uuid_when_getting_movie_with_director_by_id() throws Exception {
+        getByIdWithTrailingPath("not-a-uuid", "director")
+                .andExpect(status().isBadRequest());
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/movies/{id}/producers
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_movie_with_producers_when_getting_movie_with_producers_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getByIdWithTrailingPath(movie.getId(), "producers")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(movie.getId().toString()))
+                .andExpect(jsonPath("$.movie_number").value(movie.getMovieNumber()))
+                .andExpect(jsonPath("$.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.producers").isArray())
+                .andExpect(jsonPath("$.producers").isNotEmpty())
+                .andExpect(jsonPath("$.producers.length()").value(movie.getProducers().size()));
+    }
+
+    @Test
+    void should_return_status_not_found_for_wrong_id_when_getting_movie_with_producers_by_id() throws Exception {
+        getByIdWithTrailingPath(UUID.fromString("41e7c4a8-ad00-4137-9c83-55edd8c58fe7"), "producers")
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_for_invalid_uuid_when_getting_movie_with_producers_by_id() throws Exception {
+        getByIdWithTrailingPath("not-a-uuid", "producers")
+                .andExpect(status().isBadRequest());
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /api/movies/{id}/writers
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_movie_with_writers_when_getting_movie_with_writers_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getByIdWithTrailingPath(movie.getId(), "writers")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(movie.getId().toString()))
+                .andExpect(jsonPath("$.movie_number").value(movie.getMovieNumber()))
+                .andExpect(jsonPath("$.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.writers").isArray())
+                .andExpect(jsonPath("$.writers").isNotEmpty())
+                .andExpect(jsonPath("$.writers.length()").value(movie.getWriters().size()));
+    }
+
+    @Test
+    void should_return_status_not_found_for_wrong_id_when_getting_movie_with_writers_by_id() throws Exception {
+        getByIdWithTrailingPath(UUID.fromString("41e7c4a8-ad00-4137-9c83-55edd8c58fe7"), "writers")
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_for_invalid_uuid_when_getting_movie_with_writers_by_id() throws Exception {
+        getByIdWithTrailingPath("not-a-uuid", "writers")
                 .andExpect(status().isBadRequest());
     }
 }

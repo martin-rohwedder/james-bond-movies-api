@@ -1,6 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.services;
 
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.*;
 import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
@@ -319,6 +319,216 @@ class MovieServiceTest {
 
         // Act
         Optional<MovieResponseDto> result = movieService.getMovieById(id, false, false, false);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
+
+    @Test
+    void should_return_movie_with_trivias_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithTriviaResponseDto dto = mock(MovieWithTriviaResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithTriviaResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithTriviaResponseDto> result = movieService.getMovieWithTriviaById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithTriviaResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_trivias_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithTriviaResponseDto> result = movieService.getMovieWithTriviaById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
+
+    @Test
+    void should_return_movie_with_actors_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithActorsResponseDto dto = mock(MovieWithActorsResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithActorsResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithActorsResponseDto> result = movieService.getMovieWithActorsById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithActorsResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_actors_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithActorsResponseDto> result = movieService.getMovieWithActorsById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
+
+    @Test
+    void should_return_movie_with_director_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithDirectorResponseDto dto = mock(MovieWithDirectorResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithDirectorResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithDirectorResponseDto> result = movieService.getMovieWithDirectorById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithDirectorResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_director_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithDirectorResponseDto> result = movieService.getMovieWithDirectorById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
+
+    @Test
+    void should_return_movie_with_producers_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithProducersResponseDto dto = mock(MovieWithProducersResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithProducersResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithProducersResponseDto> result = movieService.getMovieWithProducersById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithProducersResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_producers_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithProducersResponseDto> result = movieService.getMovieWithProducersById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
+
+    @Test
+    void should_return_movie_with_writers_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithWritersResponseDto dto = mock(MovieWithWritersResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithWritersResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithWritersResponseDto> result = movieService.getMovieWithWritersById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithWritersResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_writers_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithWritersResponseDto> result = movieService.getMovieWithWritersById(id);
 
         // Assert
         assertThat(result).isEmpty();

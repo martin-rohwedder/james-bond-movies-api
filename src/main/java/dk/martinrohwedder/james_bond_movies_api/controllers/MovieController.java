@@ -1,6 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.controllers;
 
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.*;
 import dk.martinrohwedder.james_bond_movies_api.services.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,6 +41,51 @@ public class MovieController {
     )
     {
         return movieService.getMovieById(id, excludeActors, excludeProducers, excludeTrivias)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET: /api/movies/{id}/trivias
+    @Operation(summary = "Get movie by id with trivias only")
+    @GetMapping("/{id}/trivias")
+    public ResponseEntity<MovieWithTriviaResponseDto> getMovieWithTriviaById(@PathVariable UUID id) {
+        return movieService.getMovieWithTriviaById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET: /api/movies/{id}/actors
+    @Operation(summary = "Get movie by id with actors only")
+    @GetMapping("/{id}/actors")
+    public ResponseEntity<MovieWithActorsResponseDto>  getMovieWithActorsById(@PathVariable UUID id) {
+        return movieService.getMovieWithActorsById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET: /api/movies/{id}/director
+    @Operation(summary = "Get movie by id with director only")
+    @GetMapping("/{id}/director")
+    public ResponseEntity<MovieWithDirectorResponseDto>  getMovieWithDirectorsById(@PathVariable UUID id) {
+        return movieService.getMovieWithDirectorById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET: /api/movies/{id}/producers
+    @Operation(summary = "Get movie by id with producers only")
+    @GetMapping("/{id}/producers")
+    public ResponseEntity<MovieWithProducersResponseDto>  getMovieWithProducersById(@PathVariable UUID id) {
+        return movieService.getMovieWithProducersById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET: /api/movies/{id}/writers
+    @Operation(summary = "Get a movie by id with writers only")
+    @GetMapping("/{id}/writers")
+    public ResponseEntity<MovieWithWritersResponseDto>  getMovieWithWritersById(@PathVariable UUID id) {
+        return movieService.getMovieWithWritersById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
