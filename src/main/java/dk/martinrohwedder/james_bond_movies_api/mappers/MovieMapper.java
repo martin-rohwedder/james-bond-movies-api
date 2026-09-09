@@ -63,4 +63,5 @@ public interface MovieMapper {
     MovieWithTriviaResponseDto movieToMovieWithTriviaResponseDto(Movie movie);
     MovieWithActorsResponseDto movieToMovieWithActorsResponseDto(Movie movie);
     MovieWithDirectorResponseDto movieToMovieWithDirectorResponseDto(Movie movie);
+    MovieWithProducersResponseDto movieToMovieWithProducersResponseDto(Movie movie);
 }

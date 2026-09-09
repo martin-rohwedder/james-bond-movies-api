@@ -641,4 +641,34 @@ class MovieControllerIntegrationTest extends AbstractIntegrationTest {
         getByIdWithTrailingPath("not-a-uuid", "director")
                 .andExpect(status().isBadRequest());
     }
+
+    // -------------------------------------------------------------------------
+    // GET /api/movies/{id}/producers
+    // -------------------------------------------------------------------------
+
+    @Test
+    void should_return_movie_with_producers_when_getting_movie_with_producers_by_id() throws Exception {
+        Movie movie = movieRepository.findAllByOrderByMovieNumberAsc().getFirst();
+
+        getByIdWithTrailingPath(movie.getId(), "producers")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(movie.getId().toString()))
+                .andExpect(jsonPath("$.movie_number").value(movie.getMovieNumber()))
+                .andExpect(jsonPath("$.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.producers").isArray())
+                .andExpect(jsonPath("$.producers").isNotEmpty())
+                .andExpect(jsonPath("$.producers.length()").value(movie.getProducers().size()));
+    }
+
+    @Test
+    void should_return_status_not_found_for_wrong_id_when_getting_movie_with_producers_by_id() throws Exception {
+        getByIdWithTrailingPath(UUID.fromString("41e7c4a8-ad00-4137-9c83-55edd8c58fe7"), "producers")
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_for_invalid_uuid_when_getting_movie_with_producers_by_id() throws Exception {
+        getByIdWithTrailingPath("not-a-uuid", "producers")
+                .andExpect(status().isBadRequest());
+    }
 }

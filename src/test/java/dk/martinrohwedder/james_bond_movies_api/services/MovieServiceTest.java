@@ -452,4 +452,46 @@ class MovieServiceTest {
         verify(movieRepository).findById(id);
         verifyNoInteractions(movieMapper);
     }
+
+    @Test
+    void should_return_movie_with_producers_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Movie movie = createMovieEntity();
+        MovieWithProducersResponseDto dto = mock(MovieWithProducersResponseDto.class);
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.of(movie));
+
+        when(movieMapper.movieToMovieWithProducersResponseDto(movie))
+                .thenReturn(dto);
+
+        // Act
+        Optional<MovieWithProducersResponseDto> result = movieService.getMovieWithProducersById(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(movieRepository).findById(id);
+        verify(movieMapper).movieToMovieWithProducersResponseDto(movie);
+        verifyNoMoreInteractions(movieRepository, movieMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_movie_with_producers_is_not_found_by_id() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(movieRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<MovieWithProducersResponseDto> result = movieService.getMovieWithProducersById(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(movieRepository).findById(id);
+        verifyNoInteractions(movieMapper);
+    }
 }

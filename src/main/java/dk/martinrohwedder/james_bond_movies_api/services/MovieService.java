@@ -1,9 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.services;
 
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithActorsResponseDto;
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithDirectorResponseDto;
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.*;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import lombok.AllArgsConstructor;
@@ -79,5 +76,15 @@ public class MovieService {
 
         return movieRepository.findById(id)
                 .map(movieMapper::movieToMovieWithDirectorResponseDto);
+    }
+
+    /**
+     * Get a specific movie by id, with only producers
+     */
+    public Optional<MovieWithProducersResponseDto> getMovieWithProducersById(UUID id) {
+        log.debug("Fetching movie with id {} with only producers", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithProducersResponseDto);
     }
 }
