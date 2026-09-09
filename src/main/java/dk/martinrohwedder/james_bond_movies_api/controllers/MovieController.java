@@ -1,6 +1,7 @@
 package dk.martinrohwedder.james_bond_movies_api.controllers;
 
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.services.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,6 +42,15 @@ public class MovieController {
     )
     {
         return movieService.getMovieById(id, excludeActors, excludeProducers, excludeTrivias)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET: /api/movies/{id}/trivias
+    @Operation(summary = "Get movie by id with trivias only")
+    @GetMapping("/{id}/trivias")
+    public ResponseEntity<MovieWithTriviaResponseDto> getMovieWithTriviaById(@PathVariable UUID id) {
+        return movieService.getMovieWithTriviaById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

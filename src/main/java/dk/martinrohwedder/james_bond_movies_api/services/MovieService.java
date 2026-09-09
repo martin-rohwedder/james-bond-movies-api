@@ -1,6 +1,7 @@
 package dk.martinrohwedder.james_bond_movies_api.services;
 
 import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
 import dk.martinrohwedder.james_bond_movies_api.mappers.MovieMapper;
 import dk.martinrohwedder.james_bond_movies_api.repositories.MovieRepository;
 import lombok.AllArgsConstructor;
@@ -46,5 +47,15 @@ public class MovieService {
                         excludeProducers,
                         excludeTrivias
                 ));
+    }
+
+    /**
+     * Get a specific movie by id, with only trivia
+     */
+    public Optional<MovieWithTriviaResponseDto> getMovieWithTriviaById(UUID id) {
+        log.debug("Fetching movie with id {}", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithTriviaResponseDto);
     }
 }
