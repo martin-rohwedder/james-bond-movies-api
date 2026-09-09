@@ -1,9 +1,6 @@
 package dk.martinrohwedder.james_bond_movies_api.mappers;
 
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieResponseDto;
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithActorsResponseDto;
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithDirectorsResponseDto;
-import dk.martinrohwedder.james_bond_movies_api.dtos.MovieWithTriviaResponseDto;
+import dk.martinrohwedder.james_bond_movies_api.dtos.*;
 import dk.martinrohwedder.james_bond_movies_api.entities.Movie;
 import org.mapstruct.Mapper;
 
@@ -65,5 +62,5 @@ public interface MovieMapper {
 
     MovieWithTriviaResponseDto movieToMovieWithTriviaResponseDto(Movie movie);
     MovieWithActorsResponseDto movieToMovieWithActorsResponseDto(Movie movie);
-    MovieWithDirectorsResponseDto movieToMovieWithDirectorsResponseDto(Movie movie);
+    MovieWithDirectorResponseDto movieToMovieWithDirectorResponseDto(Movie movie);
 }
