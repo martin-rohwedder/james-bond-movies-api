@@ -80,4 +80,13 @@ public class MovieController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // GET: /api/movies/{id}/writers
+    @Operation(summary = "Get a movie by id with writers only")
+    @GetMapping("/{id}/writers")
+    public ResponseEntity<MovieWithWritersResponseDto>  getMovieWithWritersById(@PathVariable UUID id) {
+        return movieService.getMovieWithWritersById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

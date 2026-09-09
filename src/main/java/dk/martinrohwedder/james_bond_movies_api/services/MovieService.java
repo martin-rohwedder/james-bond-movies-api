@@ -87,4 +87,14 @@ public class MovieService {
         return movieRepository.findById(id)
                 .map(movieMapper::movieToMovieWithProducersResponseDto);
     }
+
+    /**
+     * Get a specific movie by id, with only writers
+     */
+    public Optional<MovieWithWritersResponseDto> getMovieWithWritersById(UUID id) {
+        log.debug("Fetching movie with id {} with only writers", id);
+
+        return movieRepository.findById(id)
+                .map(movieMapper::movieToMovieWithWritersResponseDto);
+    }
 }
