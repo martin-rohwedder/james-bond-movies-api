@@ -205,10 +205,14 @@
 						</goals>
 						<configuration>
 							<excludes>
+								<!-- Generated / data-only classes -->
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
 								<exclude>**/*MapperImpl.class</exclude>
 								<exclude>**/*Application.class</exclude>
+
+								<!-- GraphQL scalar implementations are currently only used for output serialization -->
+								<exclude>dk/martinrohwedder/james_bond_movies_api/graphql/scalars/**</exclude>
 							</excludes>
 						</configuration>
 					</execution>
@@ -221,10 +225,14 @@
 						</goals>
 						<configuration>
 							<excludes>
+								<!-- Generated / data-only classes -->
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
 								<exclude>**/*MapperImpl.class</exclude>
 								<exclude>**/*Application.class</exclude>
+
+								<!-- GraphQL scalar implementations are currently only used for output serialization -->
+								<exclude>dk/martinrohwedder/james_bond_movies_api/graphql/scalars/**</exclude>
 							</excludes>
 
 							<rules>
