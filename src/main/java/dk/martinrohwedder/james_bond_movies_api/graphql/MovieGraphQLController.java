@@ -13,7 +13,6 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 public class MovieGraphQLController {
-
     private final MovieService movieService;
 
     @QueryMapping
