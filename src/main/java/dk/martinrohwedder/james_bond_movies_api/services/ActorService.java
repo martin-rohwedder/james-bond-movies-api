@@ -37,4 +37,14 @@ public class ActorService {
                 .map(actor -> actorMapper.actorToActorWithMovieResponseDto(actor, includeMovies))
                 .toList();
     }
+
+    /**
+     * Get a specific actor by id with eager loading of movies
+     */
+    public Optional<ActorWithMovieResponseDto> getActorByIdWithMovies(UUID id) {
+        log.debug("Fetching actor with id {}, with movies", id);
+
+        return actorRepository.findWithMoviesById(id)
+                .map(actorMapper::actorToActorWithMovieResponseDto);
+    }
 }

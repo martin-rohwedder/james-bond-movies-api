@@ -5,6 +5,10 @@ scalar Long
 type Query {
     movies: [Movie!]!
     movie(id: ID!): Movie
+
+    actors: [ActorWithMovies!]!
+    actor(id: ID!): ActorWithMovies
+    actorByName(name: String!): [ActorWithMovies!]!
 }
 
 type Movie {
@@ -107,4 +111,21 @@ type TechnicalSpecifications {
     soundMix: String!
     aspectRatio: String!
     printedFilmFormat: String!
+}
+
+type MinimalMovie {
+    id: ID!
+    movieNumber: Int!
+    title: String!
+}
+
+type ActorWithMovies {
+    id: ID!
+    name: String!
+    characterRole: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+    movies: [MinimalMovie!]!
 }

@@ -41,6 +41,30 @@ class ActorRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
+    void should_find_actor_by_id_with_movies() {
+        Actor expected = actorRepository.findAllByOrderByNameAsc().getFirst();
+
+        Optional<Actor> result = actorRepository.findWithMoviesById(expected.getId());
+
+        assertThat(result)
+                .isPresent()
+                .get()
+                .satisfies(actor -> {
+                    assertThat(actor.getId()).isEqualTo(expected.getId());
+                    assertThat(actor.getName()).isEqualTo(expected.getName());
+                    assertThat(actor.getMovies()).isNotNull();
+                    assertThat(actor.getMovies()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void should_return_empty_optional_when_actor_id_with_movies_is_not_found() {
+        Optional<Actor> result = actorRepository.findWithMoviesById(UUID.randomUUID());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void should_find_actors_by_name() {
         List<Actor> result =
                 actorRepository.findAllByNameIgnoreCaseOrderByNameAsc("Joe Don Baker");
