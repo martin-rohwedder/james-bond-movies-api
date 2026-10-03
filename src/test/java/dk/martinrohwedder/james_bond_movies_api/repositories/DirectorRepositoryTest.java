@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +31,30 @@ class DirectorRepositoryTest extends AbstractRepositoryTest {
     @Test
     void should_return_empty_optional_when_director_id_is_not_found() {
         var result = directorRepository.findById(UUID.randomUUID());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void should_find_director_by_id_with_movies() {
+        Director expected = directorRepository.findAllByOrderByNameAsc().getFirst();
+
+        Optional<Director> result = directorRepository.findWithMoviesById(expected.getId());
+
+        assertThat(result)
+                .isPresent()
+                .get()
+                .satisfies(director -> {
+                    assertThat(director.getId()).isEqualTo(expected.getId());
+                    assertThat(director.getName()).isEqualTo(expected.getName());
+                    assertThat(director.getMovies()).isNotNull();
+                    assertThat(director.getMovies()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void should_return_empty_optional_when_director_id_with_movies_is_not_found() {
+        Optional<Director> result = directorRepository.findWithMoviesById(UUID.randomUUID());
 
         assertThat(result).isEmpty();
     }

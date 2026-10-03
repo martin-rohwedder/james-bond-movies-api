@@ -95,6 +95,48 @@ class DirectorServiceTest {
         verifyNoInteractions(directorMapper);
     }
 
+    @Test
+    void should_return_director_by_id_with_movies() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Director director = createDirectorEntity("Guy Hamilton");
+        DirectorWithMoviesResponseDto dto = createDirectorDto("Guy Hamilton");
+
+        when(directorRepository.findWithMoviesById(id))
+                .thenReturn(Optional.of(director));
+
+        when(directorMapper.directorToDirectorWithMoviesResponseDto(director))
+                .thenReturn(dto);
+
+        // Act
+        Optional<DirectorWithMoviesResponseDto> result = directorService.getDirectorByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(directorRepository).findWithMoviesById(id);
+        verify(directorMapper).directorToDirectorWithMoviesResponseDto(director);
+        verifyNoMoreInteractions(directorRepository, directorMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_director_with_movies_is_not_found() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(directorRepository.findWithMoviesById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<DirectorWithMoviesResponseDto> result = directorService.getDirectorByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(directorRepository).findWithMoviesById(id);
+        verifyNoInteractions(directorMapper);
+    }
+
     // -------------------------------------------------------------------------
     // getAllDirectors
     // -------------------------------------------------------------------------

@@ -42,4 +42,14 @@ public class DirectorService {
         return directorRepository.findById(id)
                 .map(directorMapper::directorToDirectorWithMoviesResponseDto);
     }
+
+    /**
+     * Get a specific director by id with eager loading of movies
+     */
+    public Optional<DirectorWithMoviesResponseDto> getDirectorByIdWithMovies(UUID id) {
+        log.debug("Fetching director with id {}, with movies", id);
+
+        return directorRepository.findWithMoviesById(id)
+                .map(directorMapper::directorToDirectorWithMoviesResponseDto);
+    }
 }
