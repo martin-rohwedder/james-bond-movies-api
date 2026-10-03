@@ -315,4 +315,24 @@ public class DirectorGraphQLControllerIntegrationTest {
                 .entity(String.class)
                 .isEqualTo(director.getMovies().getFirst().getTitle());
     }
+
+    @Test
+    void should_return_empty_list_when_director_name_does_not_exist() {
+        String wrongName = "Wrong name";
+
+        graphQlTester
+                .document("""
+                        query GetDirectorByName($name: String!) {
+                            directorByName(name: $name) {
+                                id
+                                name
+                            }
+                        }
+                """)
+                .variable("name", wrongName)
+                .execute()
+                .path("directorByName")
+                .entityList(Object.class)
+                .hasSize(0);
+    }
 }

@@ -335,4 +335,24 @@ public class ActorGraphQLControllerIntegrationTest {
                 .entity(String.class)
                 .isEqualTo(actor.getMovies().getFirst().getTitle());
     }
+
+    @Test
+    void should_return_empty_list_when_actor_name_does_not_exist() {
+        String wrongName = "Wrong name";
+
+        graphQlTester
+                .document("""
+                        query GetActorByName($name: String!) {
+                            actorByName(name: $name) {
+                                id
+                                name
+                            }
+                        }
+                """)
+                .variable("name", wrongName)
+                .execute()
+                .path("actorByName")
+                .entityList(Object.class)
+                .hasSize(0);
+    }
 }

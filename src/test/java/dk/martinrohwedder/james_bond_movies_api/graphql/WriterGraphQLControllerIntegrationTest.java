@@ -283,4 +283,24 @@ public class WriterGraphQLControllerIntegrationTest {
                 .entity(String.class)
                 .isEqualTo(writer.getMovies().getFirst().getTitle());
     }
+
+    @Test
+    void should_return_empty_list_when_writer_name_does_not_exist() {
+        String wrongName = "Wrong name";
+
+        graphQlTester
+                .document("""
+                        query GetWriterByName($name: String!) {
+                            writerByName(name: $name) {
+                                id
+                                name
+                            }
+                        }
+                """)
+                .variable("name", wrongName)
+                .execute()
+                .path("writerByName")
+                .entityList(Object.class)
+                .hasSize(0);
+    }
 }

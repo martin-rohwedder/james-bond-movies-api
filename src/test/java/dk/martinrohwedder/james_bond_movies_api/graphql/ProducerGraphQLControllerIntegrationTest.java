@@ -315,4 +315,24 @@ public class ProducerGraphQLControllerIntegrationTest {
                 .entity(String.class)
                 .isEqualTo(producer.getMovies().getFirst().getTitle());
     }
+
+    @Test
+    void should_return_empty_list_when_producer_name_does_not_exist() {
+        String wrongName = "Wrong name";
+
+        graphQlTester
+                .document("""
+                        query GetProducerByName($name: String!) {
+                            producerByName(name: $name) {
+                                id
+                                name
+                            }
+                        }
+                """)
+                .variable("name", wrongName)
+                .execute()
+                .path("producerByName")
+                .entityList(Object.class)
+                .hasSize(0);
+    }
 }
