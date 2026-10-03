@@ -29,6 +29,16 @@ public class WriterService {
     }
 
     /**
+     * Get a specific writer by id with eager loading of movies
+     */
+    public Optional<WriterWithMovieResponseDto> getWriterByIdWithMovies(UUID id) {
+        log.debug("Getting writer with id {}, with movies", id);
+
+        return writerRepository.findWithMoviesById(id)
+                .map(writerMapper::writerToWriterWithMovieResponseDto);
+    }
+
+    /**
      * Get All writers or a specific writer by name
      */
     public List<WriterWithMovieResponseDto> getAllWriters(String name, boolean includeMovies) {

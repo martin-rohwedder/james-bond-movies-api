@@ -37,6 +37,30 @@ public class WriterRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
+    void should_return_writer_by_id_with_movies() {
+        Writer expected = writerRepository.findAllByOrderByNameAsc().getFirst();
+
+        Optional<Writer> result = writerRepository.findWithMoviesById(expected.getId());
+
+        assertThat(result)
+                .isPresent()
+                .get()
+                .satisfies(writer -> {
+                    assertThat(writer.getId()).isEqualTo(expected.getId());
+                    assertThat(writer.getName()).isEqualTo(expected.getName());
+                    assertThat(writer.getMovies()).isNotNull();
+                    assertThat(writer.getMovies()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void should_return_empty_optional_when_writer_id_with_movies_is_not_found() {
+        Optional<Writer> result = writerRepository.findWithMoviesById(UUID.randomUUID());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void should_return_writer_by_name() {
         List<Writer> result = writerRepository.findAllByNameIgnoreCaseOrderByNameAsc("Ian Fleming");
 
