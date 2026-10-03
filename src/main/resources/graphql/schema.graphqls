@@ -21,6 +21,10 @@ type Query {
     writers: [WriterWithMovies!]!
     writer(id: ID!): WriterWithMovies
     writerByName(name: String!): [WriterWithMovies!]!
+
+    music: [Music!]!
+    musicById(id: ID!): Music
+    musicByPerformer(performer: String!): [Music!]!
 }
 
 type Movie {
@@ -64,6 +68,7 @@ type ReleaseDate {
 }
 
 type Music {
+    id: ID!
     title: String!
     performer: String!
     songUrl: String!
