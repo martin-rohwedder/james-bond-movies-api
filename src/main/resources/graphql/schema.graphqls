@@ -13,6 +13,10 @@ type Query {
     directors: [DirectorWithMovies!]!
     director(id: ID!): DirectorWithMovies
     directorByName(name: String!): [DirectorWithMovies!]!
+
+    producers: [ProducerWithMovies!]!
+    producer(id: ID!): ProducerWithMovies
+    producerByName(name: String!): [ProducerWithMovies!]!
 }
 
 type Movie {
@@ -135,6 +139,16 @@ type ActorWithMovies {
 }
 
 type DirectorWithMovies {
+    id: ID!
+    name: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+    movies: [MinimalMovie!]!
+}
+
+type ProducerWithMovies {
     id: ID!
     name: String!
     biography: String!
