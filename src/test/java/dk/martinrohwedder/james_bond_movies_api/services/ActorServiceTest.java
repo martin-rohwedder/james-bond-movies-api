@@ -94,6 +94,48 @@ class ActorServiceTest {
     }
 
     @Test
+    void should_return_actor_by_id_with_movies() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Actor actor = createActorEntity();
+        ActorWithMovieResponseDto dto = createActorDto();
+
+        when(actorRepository.findWithMoviesById(id))
+                .thenReturn(Optional.of(actor));
+
+        when(actorMapper.actorToActorWithMovieResponseDto(actor))
+                .thenReturn(dto);
+
+        // Act
+        Optional<ActorWithMovieResponseDto> result = actorService.getActorByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(actorRepository).findWithMoviesById(id);
+        verify(actorMapper).actorToActorWithMovieResponseDto(actor);
+        verifyNoMoreInteractions(actorRepository, actorMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_actor_with_movies_is_not_found() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(actorRepository.findWithMoviesById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<ActorWithMovieResponseDto> result = actorService.getActorByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(actorRepository).findWithMoviesById(id);
+        verifyNoInteractions(actorMapper);
+    }
+
+    @Test
     void should_return_all_actors_with_movies() {
         // Arrange
         Actor actor1 = createActorEntity();

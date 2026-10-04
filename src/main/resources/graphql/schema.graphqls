@@ -1,0 +1,176 @@
+scalar Date
+scalar DateTime
+scalar Long
+
+type Query {
+    movies: [Movie!]!
+    movie(id: ID!): Movie
+
+    actors: [ActorWithMovies!]!
+    actor(id: ID!): ActorWithMovies
+    actorByName(name: String!): [ActorWithMovies!]!
+
+    directors: [DirectorWithMovies!]!
+    director(id: ID!): DirectorWithMovies
+    directorByName(name: String!): [DirectorWithMovies!]!
+
+    producers: [ProducerWithMovies!]!
+    producer(id: ID!): ProducerWithMovies
+    producerByName(name: String!): [ProducerWithMovies!]!
+
+    writers: [WriterWithMovies!]!
+    writer(id: ID!): WriterWithMovies
+    writerByName(name: String!): [WriterWithMovies!]!
+
+    music: [Music!]!
+    musicById(id: ID!): Music
+    musicByPerformer(performer: String!): [Music!]!
+}
+
+type Movie {
+    id: ID!
+    movieNumber: Int!
+    title: String!
+    shortDescription: String!
+    longDescription: String!
+    trailerUrl: String!
+    worldPremiere: String!
+    contentRating: String!
+    parentsGuide: ParentsGuide!
+    releaseDates: [ReleaseDate!]!
+    music: Music!
+    jamesBondActor: String!
+    genres: [Genre!]!
+    director: Director!
+    producers: [Producer!]!
+    locations: String!
+    actors: [Actor!]!
+    writers: [Writer!]!
+    trivias: [Trivia!]!
+    boxOffice: BoxOffice!
+    technicalSpecifications: TechnicalSpecifications!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type ParentsGuide {
+    sexAndNudity: String!
+    violenceAndGore: String!
+    profanity: String!
+    alcoholDrugsAndSmoking: String!
+    frighteningAndIntenseScenes: String!
+}
+
+type ReleaseDate {
+    dateOfRelease: Date!
+    country: String!
+    countryCode: String!
+}
+
+type Music {
+    id: ID!
+    title: String!
+    performer: String!
+    songUrl: String!
+}
+
+type Genre {
+    title: String!
+}
+
+type Director {
+    id: ID!
+    name: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+}
+
+type Producer {
+    id: ID!
+    name: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+}
+
+type Actor {
+    id: ID!
+    name: String!
+    characterRole: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+}
+
+type Writer {
+    id: ID!
+    name: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+}
+
+type Trivia {
+    content: String!
+}
+
+type BoxOffice {
+    budgetUsd: Long!
+    grossRevenueUsAndCanadaUsd: Long!
+    grossRevenueWorldwideUsd: Long!
+}
+
+type TechnicalSpecifications {
+    runtimeInMinutes: Int!
+    soundMix: String!
+    aspectRatio: String!
+    printedFilmFormat: String!
+}
+
+type MinimalMovie {
+    id: ID!
+    movieNumber: Int!
+    title: String!
+}
+
+type ActorWithMovies {
+    id: ID!
+    name: String!
+    characterRole: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+    movies: [MinimalMovie!]!
+}
+
+type DirectorWithMovies {
+    id: ID!
+    name: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+    movies: [MinimalMovie!]!
+}
+
+type ProducerWithMovies {
+    id: ID!
+    name: String!
+    biography: String!
+    nationality: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+    movies: [MinimalMovie!]!
+}
+
+type WriterWithMovies {
+    id: ID!
+    name: String!
+    dateOfBirth: Date
+    dateOfDeath: Date
+    movies: [MinimalMovie!]!
+}

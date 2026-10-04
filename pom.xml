@@ -87,6 +87,20 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-graphql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.graphql-java</groupId>
+			<artifactId>graphql-java-extended-scalars</artifactId>
+			<version>24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-graphql-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -191,10 +205,14 @@
 						</goals>
 						<configuration>
 							<excludes>
+								<!-- Generated / data-only classes -->
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
 								<exclude>**/*MapperImpl.class</exclude>
 								<exclude>**/*Application.class</exclude>
+
+								<!-- GraphQL scalar implementations are currently only used for output serialization -->
+								<exclude>dk/martinrohwedder/james_bond_movies_api/graphql/scalars/**</exclude>
 							</excludes>
 						</configuration>
 					</execution>
@@ -207,10 +225,14 @@
 						</goals>
 						<configuration>
 							<excludes>
+								<!-- Generated / data-only classes -->
 								<exclude>dk/martinrohwedder/james_bond_movies_api/entities/**</exclude>
 								<exclude>dk/martinrohwedder/james_bond_movies_api/dtos/**</exclude>
 								<exclude>**/*MapperImpl.class</exclude>
 								<exclude>**/*Application.class</exclude>
+
+								<!-- GraphQL scalar implementations are currently only used for output serialization -->
+								<exclude>dk/martinrohwedder/james_bond_movies_api/graphql/scalars/**</exclude>
 							</excludes>
 
 							<rules>

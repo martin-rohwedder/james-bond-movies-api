@@ -42,4 +42,14 @@ public class ProducerService {
         return producerRepository.findById(id)
                 .map(producerMapper::producerToProducerWithMoviesResponseDto);
     }
+
+    /**
+     * Get a specific producer by id with eager loading of movies
+     */
+    public Optional<ProducerWithMoviesResponseDto> getProducerByIdWithMovies(UUID id) {
+        log.debug("Fetching producer with id {}, with movies", id);
+
+        return producerRepository.findWithMoviesById(id)
+                .map(producerMapper::producerToProducerWithMoviesResponseDto);
+    }
 }

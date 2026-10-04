@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +31,30 @@ class ProducerRepositoryTest extends AbstractRepositoryTest {
     @Test
     void should_return_empty_optional_when_producer_id_is_not_found() {
         var result = producerRepository.findById(UUID.randomUUID());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void should_find_producer_by_id_with_movies() {
+        Producer expected = producerRepository.findAllByOrderByNameAsc().getFirst();
+
+        Optional<Producer> result = producerRepository.findWithMoviesById(expected.getId());
+
+        assertThat(result)
+                .isPresent()
+                .get()
+                .satisfies(producer -> {
+                    assertThat(producer.getId()).isEqualTo(expected.getId());
+                    assertThat(producer.getName()).isEqualTo(expected.getName());
+                    assertThat(producer.getMovies()).isNotNull();
+                    assertThat(producer.getMovies()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void should_return_empty_optional_when_producer_id_with_movies_is_not_found() {
+        Optional<Producer> result = producerRepository.findWithMoviesById(UUID.randomUUID());
 
         assertThat(result).isEmpty();
     }

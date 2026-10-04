@@ -92,6 +92,48 @@ class ProducerServiceTest {
     }
 
     @Test
+    void should_return_producer_by_id_with_movies() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Producer producer = createProducerEntity("Albert R. Broccoli");
+        ProducerWithMoviesResponseDto dto = createProducerDto("Albert R. Broccoli");
+
+        when(producerRepository.findWithMoviesById(id))
+                .thenReturn(Optional.of(producer));
+
+        when(producerMapper.producerToProducerWithMoviesResponseDto(producer))
+                .thenReturn(dto);
+
+        // Act
+        Optional<ProducerWithMoviesResponseDto> result =  producerService.getProducerByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(producerRepository).findWithMoviesById(id);
+        verify(producerMapper).producerToProducerWithMoviesResponseDto(producer);
+        verifyNoMoreInteractions(producerRepository, producerMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_producer_with_movies_is_not_found() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(producerRepository.findWithMoviesById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<ProducerWithMoviesResponseDto> result = producerService.getProducerByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(producerRepository).findWithMoviesById(id);
+        verifyNoInteractions(producerMapper);
+    }
+
+    @Test
     void should_return_all_producers_with_movies() {
         Producer producer1 = createProducerEntity("Albert R. Broccoli");
         Producer producer2 = createProducerEntity("Harry Saltzman");

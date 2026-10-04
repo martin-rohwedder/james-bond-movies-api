@@ -91,6 +91,48 @@ public class WriterServiceTest {
     }
 
     @Test
+    void should_return_writer_by_id_with_movies() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Writer writer = createWriterEntity("Richard Maibaum");
+        WriterWithMovieResponseDto dto = createWriterDto("Richard Maibaum");
+
+        when(writerRepository.findWithMoviesById(id))
+                .thenReturn(Optional.of(writer));
+
+        when(writerMapper.writerToWriterWithMovieResponseDto(writer))
+                .thenReturn(dto);
+
+        // Act
+        Optional<WriterWithMovieResponseDto> result = writerService.getWriterByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).contains(dto);
+
+        verify(writerRepository).findWithMoviesById(id);
+        verify(writerMapper).writerToWriterWithMovieResponseDto(writer);
+        verifyNoMoreInteractions(writerRepository, writerMapper);
+    }
+
+    @Test
+    void should_return_empty_optional_when_writer_by_id_with_movies_is_not_found() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+
+        when(writerRepository.findWithMoviesById(id))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<WriterWithMovieResponseDto> result = writerService.getWriterByIdWithMovies(id);
+
+        // Assert
+        assertThat(result).isEmpty();
+
+        verify(writerRepository).findWithMoviesById(id);
+        verifyNoInteractions(writerMapper);
+    }
+
+    @Test
     void should_return_all_writers_with_movies() {
         // Arrange
         Writer writer1 = createWriterEntity("Ian Fleming");
