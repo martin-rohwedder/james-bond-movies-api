@@ -6,7 +6,7 @@
 
 # James Bond Movies API
 
-REST API built with Spring Boot for James Bond movies, directors, producers, actors, and music.
+API built with Spring Boot for James Bond movies. The API has support for both *REST* and *GraphQL*
 
 # How to get started
 
@@ -157,7 +157,7 @@ curl -H "X-API-Key: your-very-long-random-api-key" \
 
 In Swagger UI, click **Authorize** and enter your API key once. It will automatically be included in subsequent requests.
 
-## Endpoint Overview
+## REST Endpoints Overview
 
 An overview of all endpoints
 
@@ -224,6 +224,539 @@ An overview of all endpoints
 | **Method** 	| **Endpoint**       	                    | **Description**   	 |
 |------------	|----------------------------------------|-------------------|
 | GET        	| `/actuator/health`      	               | App health status |
+
+## GraphQL API Overview
+
+The API also provides a GraphQL endpoint for querying James Bond movie data.
+
+### Endpoint
+
+```text
+POST /graphql
+```
+
+The GraphQL endpoint requires authentication using the `X-API-Key` header.
+
+```http
+X-API-Key: your-api-key
+```
+
+GraphQL queries can be sent to:
+
+```text
+http://localhost:8080/graphql
+```
+
+### Available Queries
+
+#### Movies
+
+| Query | Description |
+|---|---|
+| `movies` | Returns all movies |
+| `movie(id)` | Returns a movie by ID |
+
+Example:
+
+Get all movies
+
+```graphql
+query Movies {
+    movies {
+        id
+        movieNumber
+        title
+        shortDescription
+        longDescription
+        trailerUrl
+        worldPremiere
+        contentRating
+        jamesBondActor
+        locations
+        createdAt
+        updatedAt
+        parentsGuide {
+            sexAndNudity
+            violenceAndGore
+            profanity
+            alcoholDrugsAndSmoking
+            frighteningAndIntenseScenes
+        }
+        releaseDates {
+            dateOfRelease
+            country
+            countryCode
+        }
+        music {
+            id
+            title
+            performer
+            songUrl
+        }
+        genres {
+            title
+        }
+        director {
+            id
+            name
+            biography
+            nationality
+            dateOfBirth
+            dateOfDeath
+        }
+        producers {
+            id
+            name
+            biography
+            nationality
+            dateOfBirth
+            dateOfDeath
+        }
+        actors {
+            id
+            name
+            characterRole
+            biography
+            nationality
+            dateOfBirth
+            dateOfDeath
+        }
+        writers {
+            id
+            name
+            dateOfBirth
+            dateOfDeath
+        }
+        trivias {
+            content
+        }
+        boxOffice {
+            budgetUsd
+            grossRevenueUsAndCanadaUsd
+            grossRevenueWorldwideUsd
+        }
+        technicalSpecifications {
+            runtimeInMinutes
+            soundMix
+            aspectRatio
+            printedFilmFormat
+        }
+    }
+}
+```
+
+Get a specific movie:
+
+```graphql
+query Movie {
+    movie(id: "movie-id") {
+        id
+        movieNumber
+        title
+        shortDescription
+        longDescription
+        trailerUrl
+        worldPremiere
+        contentRating
+        jamesBondActor
+        locations
+        createdAt
+        updatedAt
+        parentsGuide {
+            sexAndNudity
+            violenceAndGore
+            profanity
+            alcoholDrugsAndSmoking
+            frighteningAndIntenseScenes
+        }
+        releaseDates {
+            dateOfRelease
+            country
+            countryCode
+        }
+        music {
+            id
+            title
+            performer
+            songUrl
+        }
+        genres {
+            title
+        }
+        director {
+            id
+            name
+            biography
+            nationality
+            dateOfBirth
+            dateOfDeath
+        }
+        producers {
+            id
+            name
+            biography
+            nationality
+            dateOfBirth
+            dateOfDeath
+        }
+        actors {
+            id
+            name
+            characterRole
+            biography
+            nationality
+            dateOfBirth
+            dateOfDeath
+        }
+        writers {
+            id
+            name
+            dateOfBirth
+            dateOfDeath
+        }
+        trivias {
+            content
+        }
+        boxOffice {
+            budgetUsd
+            grossRevenueUsAndCanadaUsd
+            grossRevenueWorldwideUsd
+        }
+        technicalSpecifications {
+            runtimeInMinutes
+            soundMix
+            aspectRatio
+            printedFilmFormat
+        }
+    }
+}
+```
+
+#### Actors
+
+| Query | Description |
+|---|---|
+| `actors` | Returns all actors |
+| `actor(id)` | Returns an actor by ID |
+| `actorByName(name)` | Returns actors matching a name |
+
+Example:
+
+Get all actors
+
+```graphql
+query Actors {
+    actors {
+        id
+        name
+        characterRole
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific actor by id
+
+```graphql
+query Actor {
+    actor(id: "actor-id") {
+        id
+        name
+        characterRole
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific actor by name
+
+```graphql
+query ActorByName {
+    actorByName(name: "Actor Name") {
+        id
+        name
+        characterRole
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+#### Directors
+
+| Query | Description |
+|---|---|
+| `directors` | Returns all directors |
+| `director(id)` | Returns a director by ID |
+| `directorByName(name)` | Returns directors matching a name |
+
+Example:
+
+Get all directors
+
+```graphql
+query Directors {
+    directors {
+        id
+        name
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific director by id
+
+```graphql
+query Director {
+    director(id: "director-id") {
+        id
+        name
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific director by name
+
+```graphql
+query DirectorByName {
+    directorByName(name: "Director Name") {
+        id
+        name
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+#### Producers
+
+| Query | Description |
+|---|---|
+| `producers` | Returns all producers |
+| `producer(id)` | Returns a producer by ID |
+| `producerByName(name)` | Returns producers matching a name |
+
+Example:
+
+Get all producers
+
+```graphql
+query Producers {
+    producers {
+        id
+        name
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific producer by id
+
+```graphql
+query Producer {
+    producer(id: "producer-id") {
+        id
+        name
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific producer by name
+
+```graphql
+query ProducerByName {
+    producerByName(name: "Producer Name") {
+        id
+        name
+        biography
+        nationality
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+#### Writers
+
+| Query | Description |
+|---|---|
+| `writers` | Returns all writers |
+| `writer(id)` | Returns a writer by ID |
+| `writerByName(name)` | Returns writers matching a name |
+
+Example:
+
+Get all Writers
+
+```graphql
+query Writers {
+    writers {
+        id
+        name
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific writer by id
+
+```graphql
+query Writer {
+    writer(id: "writer-id") {
+        id
+        name
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+Get a specific writer by name
+
+```graphql
+query WriterByName {
+    writerByName(name: "Writer Name") {
+        id
+        name
+        dateOfBirth
+        dateOfDeath
+        movies {
+            id
+            movieNumber
+            title
+        }
+    }
+}
+```
+
+#### Music
+
+| Query | Description |
+|---|---|
+| `music` | Returns all music |
+| `musicById(id)` | Returns a music entry by ID |
+| `musicByPerformer(performer)` | Returns music entries by performer |
+
+Example:
+
+Get all music
+
+```graphql
+query Music {
+    music {
+        id
+        title
+        performer
+        songUrl
+    }
+}
+```
+
+Get music by id
+
+```graphql
+query MusicById {
+    musicById(id: "music-id") {
+        id
+        title
+        performer
+        songUrl
+    }
+}
+```
+
+Get music by performer
+
+```graphql
+query MusicByPerformer {
+    musicByPerformer(performer: "Performer Name") {
+        id
+        title
+        performer
+        songUrl
+    }
+}
+```
 
 ---
 
